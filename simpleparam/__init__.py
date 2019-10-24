@@ -9,17 +9,7 @@ import re
 from .store import ParameterStore  # noqa
 from .utilities import is_number
 
-__author__ = "l.g.migas (lukasz.g.migas@tudelft.nl)"
-__all__ = [
-    "Parameter",
-    "Number",
-    "Integer",
-    "String",
-    "Bool",
-    "Choice",
-    "Option",
-    "Color",
-]
+__all__ = ["Parameter", "Number", "Integer", "String", "Boolean", "Choice", "Option", "Color", "ParameterStore"]
 
 
 class Parameter(object):
@@ -38,6 +28,7 @@ class Parameter(object):
         "allow_None",
         "inclusive_bounds",
         "auto_bound",
+        "step",
         "_kind",
         "constant",
     ]
@@ -54,13 +45,10 @@ class Parameter(object):
         self.saveable = kws.get("saveable", True)
         self._kind = kws.get("kind", "Parameter")
         self.constant = kws.get("constant", False)
+        self.step = kws.get("step", None)
 
     def __repr__(self):
-        return f"Parameter(name=%s, value=%s, doc='%s)" % (
-            self.name,
-            self.value,
-            self.doc,
-        )
+        return f"Parameter(name='%s', value=%s, doc='%s')" % (self.name, self.value, self.doc)
 
     def _validate(self, val):
         """Implements validation for the parameter"""
@@ -101,7 +89,7 @@ class Number(Parameter):
     def __init__(self, value, kind="Number", **kws):
         super(Number, self).__init__(value=value, kind=kind, **kws)
 
-        self._validate(self._value)
+        self.value = self._validate(self._value)
 
     # Allow softbounds to be used like a normal attribute, as it
     # probably should have been already (not _softbounds)
@@ -142,30 +130,18 @@ class Number(Parameter):
             if vmax is not None:
                 if incmax is True:
                     if not val <= vmax:
-                        raise ValueError(
-                            "Parameter '{}' must be at most {}".format(self.name, vmax)
-                        )
+                        raise ValueError("Parameter '{}' must be at most {}".format(self.name, vmax))
                 else:
                     if not val < vmax:
-                        raise ValueError(
-                            "Parameter '{}' must be less than {}".format(
-                                self.name, vmax
-                            )
-                        )
+                        raise ValueError("Parameter '{}' must be less than {}".format(self.name, vmax))
 
             if vmin is not None:
                 if incmin is True:
                     if not val >= vmin:
-                        raise ValueError(
-                            "Parameter '{}' must be at least {}".format(self.name, vmin)
-                        )
+                        raise ValueError("Parameter '{}' must be at least {}".format(self.name, vmin))
                 else:
                     if not val > vmin:
-                        raise ValueError(
-                            "Parameter '{}' must be greater than {}".format(
-                                self.name, vmin
-                            )
-                        )
+                        raise ValueError("Parameter '{}' must be greater than {}".format(self.name, vmin))
 
     def get_soft_bounds(self):
         """
@@ -239,7 +215,7 @@ class Integer(Number):
     def __init__(self, value, kind="Integer", **kws):
         super(Integer, self).__init__(value=value, kind=kind, **kws)
 
-        self._validate(self._value)
+        self.value = self._validate(self._value)
 
     def _validate(self, val):
         if self.allow_None and val is None:
@@ -256,15 +232,15 @@ class Integer(Number):
         return val
 
 
-class Bool(Parameter):
+class Boolean(Parameter):
     """
     Bool class, allowing storing of `boolean` objects
     """
 
-    def __init__(self, value, kind="Bool", **kws):
-        super(Bool, self).__init__(value=value, kind=kind, **kws)
+    def __init__(self, value, kind="Boolean", **kws):
+        super(Boolean, self).__init__(value=value, kind=kind, **kws)
 
-        self._validate(self._value)
+        self.value = self._validate(self._value)
 
     def _validate(self, val):
         """
@@ -273,14 +249,10 @@ class Bool(Parameter):
         """
         if self.allow_None:
             if not isinstance(val, bool) and val is not None:
-                raise ValueError(
-                    "Boolean '%s' only takes a Boolean value or None." % self.name
-                )
+                raise ValueError("Boolean '%s' only takes a Boolean value or None." % self.name)
 
             if val is not True and val is not False and val is not None:
-                raise ValueError(
-                    "Boolean '%s' must be True, False, or None." % self.name
-                )
+                raise ValueError("Boolean '%s' must be True, False, or None." % self.name)
         else:
             if not isinstance(val, bool):
                 raise ValueError("Boolean '%s' only takes a Boolean value." % self.name)
@@ -295,21 +267,13 @@ class String(Parameter):
     String class, allowing storing of `string` object
     """
 
-    __slots__ = [
-        "name",
-        "doc",
-        "_value",
-        "allow_None",
-        "allow_any",
-        "saveable",
-        "constant",
-    ]
+    __slots__ = ["name", "doc", "_value", "allow_None", "allow_any", "saveable", "constant"]
 
     def __init__(self, value, kind="String", **kws):
         super(String, self).__init__(value=value, kind=kind, **kws)
 
         self.allow_any = kws.get("allow_any", False)
-        self._validate(self._value)
+        self.value = self._validate(self._value)
 
     def _validate(self, val):
         """
@@ -353,16 +317,7 @@ class Option(object):
     Base class for `Choice` allowing specification of choices
     """
 
-    __slots__ = [
-        "name",
-        "doc",
-        "_value",
-        "_choices",
-        "saveable",
-        "allow_None",
-        "_kind",
-        "constant",
-    ]
+    __slots__ = ["name", "doc", "_value", "_choices", "saveable", "allow_None", "_kind", "constant"]
 
     def __init__(self, **kws):
         self.name = kws.get("name", "param")
@@ -375,20 +330,13 @@ class Option(object):
         self.constant = kws.get("constant", False)
 
     def __repr__(self):
-        return f"Choice(name=%s, value=%s, choices=`%s`, doc='%s)" % (
-            self.name,
-            self.value,
-            self.choices,
-            self.doc,
-        )
+        return f"Choice(name=%s, value=%s, choices=`%s`, doc='%s)" % (self.name, self.value, self.choices, self.doc)
 
     def _validate(self, val):
         """Implements validation for the parameter"""
         if val in self.choices:
             return val
-        raise ValueError(
-            "Value `{}` not in the provided choices: {}".format(val, self.choices)
-        )
+        raise ValueError("Value `{}` not in the provided choices: {}".format(val, self.choices))
 
     def _validate_choices(self, val):
         """Ensure choices are a list"""
@@ -436,4 +384,4 @@ class Choice(Option):
         super(Choice, self).__init__(value=value, choices=choices, kind=kind, **kws)
 
         self._validate_choices(choices)
-        self._validate(self._value)
+        self.value = self._validate(self._value)

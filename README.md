@@ -1,6 +1,6 @@
 # SimpleParam
 
-A simplified copycat of the [param](https://param.pyviz.org/) library.
+A copycat of the [param](https://param.pyviz.org/) library with simpler interface.
 
 This library is certainly incomplete and is missing a lot of the awesome features of `param`, however, provides a nice
 starting point.
@@ -46,7 +46,7 @@ class Config(param.ParameterStore):
         # parameters can be prevented from being changed by setting value of `constant
         self.color = param.Color("#FFFFFF",
                                  constant=True)
-        self.bool = param.Bool(True)
+        self.bool = param.Boolean(True)
 
 config = Config()
 config
@@ -77,6 +77,37 @@ config
   'choices': ['foo', 'bar'],
   'kind': 'Choice'},
  'color': {'name': 'param', 'value': '#FFFFFF', 'doc': '', 'kind': 'Color'},
- 'bool': {'name': 'param', 'value': True, 'doc': '', 'kind': 'Bool'}
+ 'bool': {'name': 'param', 'value': True, 'doc': '', 'kind': 'Boolean'}
  }
 ```
+
+Built-in type-checking
+
+```python
+number = param.Number("42")
+[ ... ]
+>>> ValueError: Parameter 'param' only takes numeric values
+```
+
+Built-in range-checking
+
+```python
+number = param.Number(42, hardbounds=[0, 41])
+[ ... ]
+>>> ValueError: Parameter 'param' must be at most 41
+```
+
+Which can be relaxed to allow value correction if its set outside of the hard boundary
+
+```python
+number = param.Number(42, hardbounds=[0, 41], auto_bound=True)
+[ ... ]
+>>> Parameter(name='param', value=41, doc='')
+```
+
+## Note
+
+- currently Parameter and ParameterStore cannot be pickled
+- classes such as `Path`, `List`, `Tuple` or `Selector` are missing
+- no tests have been written yet
+- api is not settled

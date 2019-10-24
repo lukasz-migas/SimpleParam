@@ -20,10 +20,7 @@ class ParameterStore(object):
     def __setattr__(self, name, val):
         if name in self.__dict__:
             if hasattr(self.__dict__[name], "value"):
-                if (
-                    hasattr(self.__dict__[name], "constant")
-                    and self.__dict__[name].constant
-                ):
+                if hasattr(self.__dict__[name], "constant") and self.__dict__[name].constant:
                     raise ValueError("Parameter `%s` cannot be modified" % name)
                 self.__dict__[name].value = val
         else:
@@ -66,10 +63,7 @@ class ParameterStore(object):
                     )
                 elif parameter.kind in ["Bool", "String", "Color"]:
                     _export[name] = dict(
-                        name=parameter.name,
-                        value=parameter.value,
-                        doc=parameter.doc,
-                        kind=parameter.kind,
+                        name=parameter.name, value=parameter.value, doc=parameter.doc, kind=parameter.kind
                     )
                 elif parameter.kind in ["Option", "Choice"]:
                     _export[name] = dict(
