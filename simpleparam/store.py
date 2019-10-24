@@ -23,7 +23,7 @@ class ParameterStore(object):
             self.__dict__[name] = val
 
     def __repr__(self):
-        return "%s(count=%s)" % (self._name, len(self.__dict__))
+        return "{}(count={})".format(self._name, len(self.__dict__))
 
     def __iter__(self):
         return iter(self.__dict__)
@@ -55,14 +55,14 @@ class ParameterStore(object):
                         doc=parameter.doc,
                         softbounds=parameter.softbounds,
                         hardbounds=parameter.hardbounds,
-                        kind=parameter.kind
+                        kind=parameter.kind,
                     )
                 elif parameter.kind in ["Bool", "String", "Color"]:
                     _export[name] = dict(
                         name=parameter.name,
                         value=parameter.value,
                         doc=parameter.doc,
-                        kind=parameter.kind
+                        kind=parameter.kind,
                     )
                 elif parameter.kind in ["Option", "Choice"]:
                     _export[name] = dict(
@@ -70,7 +70,7 @@ class ParameterStore(object):
                         value=parameter.value,
                         doc=parameter.doc,
                         choices=parameter.choices,
-                        kind=parameter.kind
+                        kind=parameter.kind,
                     )
 
         # return data

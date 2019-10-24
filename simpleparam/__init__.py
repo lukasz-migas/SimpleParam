@@ -4,13 +4,22 @@ Simplified version of the `param` library (https://param.pyviz.org/).
 `simpleparam` tries to emulate the best features of `param` by providing a subset of availabel classes/objects while
 making it slightly easier to use while also allowing easy expansion
 """
-
 import re
+
+from .store import ParameterStore  # noqa
 from .utilities import is_number
-from .store import ParameterStore
 
 __author__ = "l.g.migas (lukasz.g.migas@tudelft.nl)"
-__all__ = ["Parameter", "Number", "Integer", "String", "Bool", "Choice", "Option", "Color"]
+__all__ = [
+    "Parameter",
+    "Number",
+    "Integer",
+    "String",
+    "Bool",
+    "Choice",
+    "Option",
+    "Color",
+]
 
 
 class Parameter(object):
@@ -18,8 +27,19 @@ class Parameter(object):
     Base class for most of the other classes
     """
 
-    __slots__ = ["name", "doc", "_value", "bounds", "_softbounds", "hardbounds", "saveable",
-                 "allow_None", "inclusive_bounds", "auto_bound", "_kind"]
+    __slots__ = [
+        "name",
+        "doc",
+        "_value",
+        "bounds",
+        "_softbounds",
+        "hardbounds",
+        "saveable",
+        "allow_None",
+        "inclusive_bounds",
+        "auto_bound",
+        "_kind",
+    ]
 
     def __init__(self, **kws):
         self.name = kws.get("name", "param")
@@ -34,7 +54,11 @@ class Parameter(object):
         self._kind = kws.get("kind", "Parameter")
 
     def __repr__(self):
-        return f"Parameter(name=%s, value=%s, doc='%s)" % (self.name, self.value, self.doc)
+        return f"Parameter(name=%s, value=%s, doc='%s)" % (
+            self.name,
+            self.value,
+            self.doc,
+        )
 
     def _validate(self, val):
         """Implements validation for the parameter"""
@@ -268,6 +292,7 @@ class String(Parameter):
     """
     String class, allowing storing of `string` object
     """
+
     __slots__ = ["name", "doc", "_value", "allow_None", "allow_any", "saveable"]
 
     def __init__(self, value, kind="String", **kws):
@@ -297,6 +322,7 @@ class Color(Parameter):
     Color parameter defined as a hex RGB string with an optional #
     prefix.
     """
+
     __slots__ = ["name", "doc", "_value", "saveable", "_kind", "allow_None"]
 
     def __init__(self, value=None, kind="Color", **kwargs):
@@ -329,13 +355,20 @@ class Option(object):
         self._kind = kws.get("kind", "Option")
 
     def __repr__(self):
-        return f"Choice(name=%s, value=%s, choices=`%s`, doc='%s)" % (self.name, self.value, self.choices, self.doc)
+        return f"Choice(name=%s, value=%s, choices=`%s`, doc='%s)" % (
+            self.name,
+            self.value,
+            self.choices,
+            self.doc,
+        )
 
     def _validate(self, val):
         """Implements validation for the parameter"""
         if val in self.choices:
             return val
-        raise ValueError("Value `%s` not in the provided choices: %s" % (val, self.choices))
+        raise ValueError(
+            "Value `{}` not in the provided choices: {}".format(val, self.choices)
+        )
 
     def _validate_choices(self, val):
         """Ensure choices are a list"""
