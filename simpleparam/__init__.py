@@ -39,6 +39,7 @@ class Parameter(object):
         "inclusive_bounds",
         "auto_bound",
         "_kind",
+        "constant",
     ]
 
     def __init__(self, **kws):
@@ -52,6 +53,7 @@ class Parameter(object):
         self.inclusive_bounds = kws.get("inclusive_bounds", [True, True])
         self.saveable = kws.get("saveable", True)
         self._kind = kws.get("kind", "Parameter")
+        self.constant = kws.get("constant", False)
 
     def __repr__(self):
         return f"Parameter(name=%s, value=%s, doc='%s)" % (
@@ -293,7 +295,15 @@ class String(Parameter):
     String class, allowing storing of `string` object
     """
 
-    __slots__ = ["name", "doc", "_value", "allow_None", "allow_any", "saveable"]
+    __slots__ = [
+        "name",
+        "doc",
+        "_value",
+        "allow_None",
+        "allow_any",
+        "saveable",
+        "constant",
+    ]
 
     def __init__(self, value, kind="String", **kws):
         super(String, self).__init__(value=value, kind=kind, **kws)
@@ -323,7 +333,7 @@ class Color(Parameter):
     prefix.
     """
 
-    __slots__ = ["name", "doc", "_value", "saveable", "_kind", "allow_None"]
+    __slots__ = ["name", "doc", "_value", "saveable", "_kind", "allow_None", "constant"]
 
     def __init__(self, value=None, kind="Color", **kwargs):
         super(Color, self).__init__(value=value, allow_None=False, kind=kind, **kwargs)
@@ -343,7 +353,16 @@ class Option(object):
     Base class for `Choice` allowing specification of choices
     """
 
-    __slots__ = ["name", "doc", "_value", "_choices", "saveable", "allow_None", "_kind"]
+    __slots__ = [
+        "name",
+        "doc",
+        "_value",
+        "_choices",
+        "saveable",
+        "allow_None",
+        "_kind",
+        "constant",
+    ]
 
     def __init__(self, **kws):
         self.name = kws.get("name", "param")
@@ -353,6 +372,7 @@ class Option(object):
         self.allow_None = kws.get("allow_None", True)
         self.saveable = kws.get("saveable", True)
         self._kind = kws.get("kind", "Option")
+        self.constant = kws.get("constant", False)
 
     def __repr__(self):
         return f"Choice(name=%s, value=%s, choices=`%s`, doc='%s)" % (

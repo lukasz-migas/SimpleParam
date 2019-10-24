@@ -1,5 +1,7 @@
 """General class for storing parameters"""
 
+PROTECTED = ["_name"]
+
 
 class ParameterStore(object):
     """Parameter store"""
@@ -18,12 +20,17 @@ class ParameterStore(object):
     def __setattr__(self, name, val):
         if name in self.__dict__:
             if hasattr(self.__dict__[name], "value"):
+                if (
+                    hasattr(self.__dict__[name], "constant")
+                    and self.__dict__[name].constant
+                ):
+                    raise ValueError("Parameter `%s` cannot be modified" % name)
                 self.__dict__[name].value = val
         else:
             self.__dict__[name] = val
 
     def __repr__(self):
-        return "{}(count={})".format(self._name, len(self.__dict__))
+        return "{}(count={})".format(self._name, len(self.__dict__) - len(PROTECTED))
 
     def __iter__(self):
         return iter(self.__dict__)
@@ -42,7 +49,7 @@ class ParameterStore(object):
 
         for name, parameter in self.items():
             # ignore reserved names
-            if name == "_name":
+            if name in PROTECTED:
                 continue
 
             # only export saveable objects
