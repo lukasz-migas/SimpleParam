@@ -9,6 +9,7 @@ class TestNumber(object):
 
     @staticmethod
     def test_creation_good():
+        """Test Number - correct initilization"""
         value = 1.0
         num_a = param.Number(value=value)
         assert num_a.value == value
@@ -39,21 +40,22 @@ class TestNumber(object):
 
     @staticmethod
     def test_creation_bad():
-        with pytest.raises(ValueError) as e_info:
+        """Test Number - throw error due to incorrect initilization"""
+        with pytest.raises(ValueError) as __:
             value = 42
-            num_a = param.Number(value=value, hardbounds=[0, 41])
+            __ = param.Number(value=value, hardbounds=[0, 41])
 
-        with pytest.raises(ValueError) as e_info:
+        with pytest.raises(ValueError) as __:
             value = -42
-            num_a = param.Number(value=value, hardbounds=[-42, 100], inclusive_bounds=[False, False])
+            __ = param.Number(value=value, hardbounds=[-42, 100], inclusive_bounds=[False, False])
 
-        with pytest.raises(ValueError) as e_info:
+        with pytest.raises(ValueError) as __:
             value = None
-            num_a = param.Number(value=value, allow_None=False)
+            __ = param.Number(value=value, allow_None=False)
 
-        with pytest.raises(ValueError) as e_info:
+        with pytest.raises(ValueError) as __:
             value = "42"
-            num_a = param.Number(value=value)
+            __ = param.Number(value=value)
 
 
 class TestInteger(object):
@@ -61,6 +63,7 @@ class TestInteger(object):
 
     @staticmethod
     def test_creation_good():
+        """Test Integer - correct initilization"""
         value = 1
         num_a = param.Integer(value=value)
         assert num_a.value == value
@@ -91,18 +94,19 @@ class TestInteger(object):
 
     @staticmethod
     def test_creation_bad():
-        with pytest.raises(ValueError) as e_info:
+        """Test Integer - throw error due to incorrect initilization"""
+        with pytest.raises(ValueError) as __:
             value = 42
-            num_a = param.Integer(value=value, hardbounds=[0, 41])
+            __ = param.Integer(value=value, hardbounds=[0, 41])
 
-        with pytest.raises(ValueError) as e_info:
+        with pytest.raises(ValueError) as __:
             value = -42
-            num_a = param.Integer(value=value, hardbounds=[-42, 100], inclusive_bounds=[False, False])
+            __ = param.Integer(value=value, hardbounds=[-42, 100], inclusive_bounds=[False, False])
 
-        with pytest.raises(ValueError) as e_info:
+        with pytest.raises(ValueError) as __:
             value = None
-            num_a = param.Integer(value=value, allow_None=False)
+            __ = param.Integer(value=value, allow_None=False)
 
-        with pytest.raises(ValueError) as e_info:
+        with pytest.raises(ValueError) as __:
             value = "42"
-            num_a = param.Integer(value=value)
+            __ = param.Integer(value=value)
