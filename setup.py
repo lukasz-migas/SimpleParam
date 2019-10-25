@@ -19,9 +19,7 @@ DOWNLOAD_URL = "https://github.com/lukasz-migas/SimpleParam"
 #     INSTALL_REQUIRES = f.read().splitlines()
 
 INSTALL_REQUIRES = []
-PACKAGES = [
-    "simpleparam",
-]
+PACKAGES = ["simpleparam"]
 
 CLASSIFIERS = [
     "Intended Audience :: Science/Research",
