@@ -21,38 +21,30 @@ class TestString(object):
 
         name = "string value"
         str_a = param.String(value=value, doc=doc, name=name)
-        assert str_a.doc == doc
-        assert str_a.value == value
         assert str_a.name == name
 
         value = None
         str_a = param.String(value=value, doc=doc, name=name, allow_None=True)
-        assert str_a.doc == doc
         assert str_a.value == value
-        assert str_a.name == name
 
         value = dict()
         str_a = param.String(value=value, doc=doc, name=name, allow_any=True)
-        assert str_a.doc == doc
         assert str_a.value == str(value)
-        assert str_a.name == name
 
         value = list()
         str_a = param.String(value=value, doc=doc, name=name, allow_any=True)
-        assert str_a.doc == doc
         assert str_a.value == str(value)
-        assert str_a.name == name
 
         value = 123
         str_a = param.String(value=value, doc=doc, name=name, allow_any=True)
-        assert str_a.doc == doc
         assert str_a.value == str(value)
-        assert str_a.name == name
 
         value = "hello"
         str_a = param.String(value=value, saveable=True)
         assert str_a.value == value
-        assert str_a.saveable == True
+        assert str_a.saveable
+
+        assert str_a.kind == "String"
 
     @staticmethod
     def test_creation_bad():

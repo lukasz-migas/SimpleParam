@@ -21,19 +21,22 @@ class TestBoolean(object):
         doc = "test doc"
         bool_a = param.Boolean(value=value, doc=doc)
         assert bool_a.doc == doc
-        assert bool_a.value == value
 
-        doc = "test doc"
         value = None
         bool_a = param.Boolean(value=value, doc=doc, allow_None=True)
-        assert bool_a.doc == doc
         assert bool_a.value == value
+
+        assert bool_a.kind == "Boolean"
 
     @staticmethod
     def test_creation_bad():
         """Test Boolean - throw error due to incorrect initilization"""
         with pytest.raises(ValueError) as __:
             value = 42
+            __ = param.Boolean(value=value)
+
+        with pytest.raises(ValueError) as __:
+            value = "true"
             __ = param.Boolean(value=value)
 
         with pytest.raises(ValueError) as __:

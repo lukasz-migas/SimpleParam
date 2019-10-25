@@ -27,24 +27,24 @@ matrix:
     - python: 3.7
       env: TOXENV=py37-pre
     # macOS
-    - python: 2.7
-      env: TOXENV=py27-pytest
-      os: osx
-    - python: 3.4
-      env: TOXENV=py34-pytest
-      os: osx
-    - python: 3.5
-      env: TOXENV=py35-pytest
-      os: osx
-    - python: 3.6
-      env: TOXENV=py36-pytest
-      os: osx
-    - python: 3.7
-      env: TOXENV=py37-pytest
-      os: osx
-    - python: pypy
-      env: TOXENV=pypy-pytest
-      os: osx
+    # - python: 2.7
+    #   env: TOXENV=py27-pytest
+    #   os: osx
+    # - python: 3.4
+    #   env: TOXENV=py34-pytest
+    #   os: osx
+    # - python: 3.5
+    #   env: TOXENV=py35-pytest
+    #   os: osx
+    # - python: 3.6
+    #   env: TOXENV=py36-pytest
+    #   os: osx
+    # - python: 3.7
+    #   env: TOXENV=py37-pytest
+    #   os: osx
+    # - python: pypy
+    #   env: TOXENV=pypy-pytest
+    #   os: osx
     # linters
     - python: 3.7
       env: TOXENV=py37-flake8

@@ -39,16 +39,19 @@ class Parameter(object):
         self._value = kws.get("value", None)
         self._softbounds = kws.get("softbounds", None)
         self.hardbounds = kws.get("hardbounds", None)
-        self.allow_None = kws.get("allow_None", True)
-        self.auto_bound = kws.get("auto_bound", False)
+        self.allow_None = self._validate_bool(kws.get("allow_None", True))
+        self.auto_bound = self._validate_bool(kws.get("auto_bound", False))
         self.inclusive_bounds = kws.get("inclusive_bounds", [True, True])
-        self.saveable = kws.get("saveable", True)
+        self.saveable = self._validate_bool(kws.get("saveable", True))
         self._kind = kws.get("kind", "Parameter")
-        self.constant = kws.get("constant", False)
+        self.constant = self._validate_bool(kws.get("constant", False))
         self.step = kws.get("step", None)
 
     def __repr__(self):
         return "Parameter(name='{}', value={}, doc='{}')".format(self.name, self.value, self.doc)
+
+    def __setattr__(self, name, value):
+        super(Parameter, self).__setattr__(name, value)
 
     def _validate(self, val):
         """Implements validation for the parameter"""
@@ -168,7 +171,7 @@ class Number(Parameter):
         else:
             upper = soft_upper
 
-        return (lower, upper)
+        return [lower, upper]
 
     def crop_to_bounds(self, val):
         """
@@ -301,15 +304,17 @@ class Color(Parameter):
 
     def __init__(self, value=None, kind="Color", **kwargs):
         super(Color, self).__init__(value=value, allow_None=False, kind=kind, **kwargs)
-        self._validate(value)
+        self.value = self._validate(value)
 
     def _validate(self, val):
         if self.allow_None and val is None:
-            return
+            return val
         if not isinstance(val, str):
             raise ValueError("Color '%s' only takes a string value." % self.name)
         if not re.match("^#?(([0-9a-fA-F]{2}){3}|([0-9a-fA-F]){3})$", val):
             raise ValueError("Color '%s' only accepts valid RGB hex codes." % self.name)
+
+        return val
 
 
 class Option(object):
@@ -334,6 +339,9 @@ class Option(object):
 
     def _validate(self, val):
         """Implements validation for the parameter"""
+        if self.allow_None and val is None:
+            return val
+
         if val in self.choices:
             return val
         raise ValueError("Value `{}` not in the provided choices: {}".format(val, self.choices))
@@ -362,7 +370,9 @@ class Option(object):
     @choices.setter
     def choices(self, value):
         """Set `choices`"""
-        self._choices = self._validate_choices(value)
+        value = self._validate_choices(value)
+        __ = self._validate(self.value)
+        self._choices = value
 
     @property
     def kind(self):

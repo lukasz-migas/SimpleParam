@@ -38,6 +38,24 @@ class TestNumber(object):
         num_a = param.Number(value=value, allow_None=True)
         assert num_a.value == value
 
+        value = 42.01
+        bounds = [-100, 100]
+        num_a = param.Number(value=value, softbounds=bounds)
+        assert num_a.softbounds == bounds
+        assert num_a.get_soft_bounds() == bounds
+
+        num_a = param.Number(value=value, hardbounds=[-100, 100])
+        assert num_a.get_soft_bounds() == bounds
+
+        num_a = param.Number(value=value)
+        assert num_a.get_soft_bounds() == [None, None]
+
+        value = -150
+        num_a = param.Number(value=value, auto_bound=False)
+        assert num_a.value == -150
+
+        assert num_a.kind == "Number"
+
     @staticmethod
     def test_creation_bad():
         """Test Number - throw error due to incorrect initilization"""
@@ -95,6 +113,8 @@ class TestInteger(object):
         value = None
         num_a = param.Integer(value=value, allow_None=True)
         assert num_a.value == value
+
+        assert num_a.kind == "Integer"
 
     @staticmethod
     def test_creation_bad():

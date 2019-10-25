@@ -32,7 +32,7 @@ import simpleparam as param
 
 class Config(param.ParameterStore):
     def __init__(self):
-        sp.ParameterStore.**init**(self)
+        sp.ParameterStore.__init__(self)
 
         # # you can add parameter docstrings by setting `doc`
         self.integer = param.Integer(42,
