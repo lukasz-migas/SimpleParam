@@ -57,6 +57,10 @@ class TestNumber(object):
             value = "42"
             __ = param.Number(value=value)
 
+        with pytest.raises(ValueError) as __:
+            value = None
+            __ = param.Number(value=value, allow_None=False)
+
 
 class TestInteger(object):
     """Test Integer class"""
@@ -110,3 +114,7 @@ class TestInteger(object):
         with pytest.raises(ValueError) as __:
             value = "42"
             __ = param.Integer(value=value)
+
+        with pytest.raises(ValueError) as __:
+            value = None
+            __ = param.Integer(value=value, allow_None=False)
