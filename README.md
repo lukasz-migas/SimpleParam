@@ -1,5 +1,12 @@
 # SimpleParam
 
+[![Build Status](https://travis-ci.com/lukasz-migas/SimpleParam.svg?branch=master)](https://travis-ci.com/lukasz-migas/SimpleParam)
+[![CircleCI](https://circleci.com/gh/lukasz-migas/specML.svg?style=svg)](https://circleci.com/gh/lukasz-migas/specML)
+[![Build status](https://ci.appveyor.com/api/projects/status/518hbck32eaekp4w?svg=true)](https://ci.appveyor.com/project/lukasz-migas/simpleparam)
+[![codecov](https://codecov.io/gh/lukasz-migas/SimpleParam/branch/master/graph/badge.svg)](https://codecov.io/gh/lukasz-migas/SimpleParam)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/775f9aedd36b49de9400362fe3a57918)](https://www.codacy.com/manual/lukasz-migas/SimpleParam?utm_source=github.com&utm_medium=referral&utm_content=lukasz-migas/SimpleParam&utm_campaign=Badge_Grade)
+[![CodeFactor](https://www.codefactor.io/repository/github/lukasz-migas/simpleparam/badge)](https://www.codefactor.io/repository/github/lukasz-migas/simpleparam)
+
 A copycat of the [param](https://param.pyviz.org/) library with simpler interface.
 
 This library is certainly incomplete and is missing a lot of the awesome features of `param`, however, provides a nice
@@ -106,6 +113,8 @@ number = param.Number(42, hardbounds=[0, 41], auto_bound=True)
 ```
 
 ## Note
+
+Missing features:
 
 - currently Parameter and ParameterStore cannot be pickled
 - classes such as `Path`, `List`, `Tuple` or `Selector` are missing
