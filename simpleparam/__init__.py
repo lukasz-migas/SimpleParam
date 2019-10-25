@@ -48,7 +48,7 @@ class Parameter(object):
         self.step = kws.get("step", None)
 
     def __repr__(self):
-        return f"Parameter(name='%s', value=%s, doc='%s')" % (self.name, self.value, self.doc)
+        return "Parameter(name='%s', value=%s, doc='%s')" % (self.name, self.value, self.doc)
 
     def _validate(self, val):
         """Implements validation for the parameter"""
@@ -330,7 +330,7 @@ class Option(object):
         self.constant = kws.get("constant", False)
 
     def __repr__(self):
-        return f"Choice(name=%s, value=%s, choices=`%s`, doc='%s)" % (self.name, self.value, self.choices, self.doc)
+        return "Choice(name=%s, value=%s, choices=`%s`, doc='%s)" % (self.name, self.value, self.choices, self.doc)
 
     def _validate(self, val):
         """Implements validation for the parameter"""
