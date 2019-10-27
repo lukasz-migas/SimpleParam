@@ -64,12 +64,12 @@ class TestBoolean(object):
                 self.param_color = param.Color(value="#FFF000")
                 self.param_choice = param.Choice(value="boo", choices=["boo", "baa"])
                 self.param_str = param.String("hello")
-                self.param_bool = param.Boolean(0)
+                self.param_bool = param.Boolean(False)
                 self.param_option = param.Option(value=None, choices=[True, False])
 
         config = Config()
         export_dict = config.export_as_json()
-        assert len(export_dict) == 1
+        assert len(export_dict) == 7
 
     @staticmethod
     def test_variables_not_exportable():

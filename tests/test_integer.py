@@ -1,5 +1,6 @@
 """Test Integer class"""
 from __future__ import division
+
 import operator
 
 import pytest

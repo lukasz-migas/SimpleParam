@@ -58,7 +58,7 @@ class ParameterStore(object):
                         hardbounds=parameter.hardbounds,
                         kind=parameter.kind,
                     )
-                elif parameter.kind in ["Bool", "String", "Color"]:
+                elif parameter.kind in ["Boolean", "String", "Color"]:
                     _export[name] = dict(
                         name=parameter.name, value=parameter.value, doc=parameter.doc, kind=parameter.kind
                     )
