@@ -8,6 +8,7 @@ import operator
 import re
 
 from .store import ParameterStore  # noqa
+from .utilities import get_occupied_slots
 from .utilities import is_number
 
 __all__ = ["Parameter", "Number", "Integer", "String", "Boolean", "Choice", "Option", "Color", "ParameterStore"]
@@ -95,6 +96,22 @@ class Parameter(object):
     def _validate(self, val):
         """Implements validation for the parameter"""
         return val
+
+    def __getstate__(self):
+        """
+        All Parameters have slots, not a dict, so we have to support
+        pickle and deepcopy ourselves.
+        """
+        state = {}
+        for slot in get_occupied_slots(self):
+            state[slot] = getattr(self, slot)
+        return state
+
+    def __setstate__(self, state):
+        # set values of __slots__ (instead of in non-existent __dict__)
+
+        for (k, v) in state.items():
+            setattr(self, k, v)
 
     def _validate_bool(self, val):
         """Ensure value is either True/False"""

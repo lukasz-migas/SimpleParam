@@ -1,5 +1,4 @@
 """Test ParamStore pickling"""
-import pytest
 import pickle
 
 import simpleparam as param
