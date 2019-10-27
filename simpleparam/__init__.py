@@ -405,8 +405,6 @@ class Color(Parameter):
         self.value = self._validate(value)
 
     def _validate(self, val):
-        if self.allow_None and val is None:
-            return val
         if not isinstance(val, str):
             raise ValueError("Color '%s' only takes a string value." % self.name)
         if not re.match("^#?(([0-9a-fA-F]{2}){3}|([0-9a-fA-F]){3})$", val):
@@ -427,9 +425,7 @@ class Option(Parameter):
         self._choices = kws.get("choices", [])
 
     def __str__(self):
-        return "Choice(name={}, value='{}', choices=`{}`, doc='{})".format(
-            self.name, self.value, self.choices, self.doc
-        )
+        return "Choice(name={}, value='{}', choices={}, doc='{}')".format(self.name, self.value, self.choices, self.doc)
 
     def _validate(self, val):
         """Implements validation for the parameter"""

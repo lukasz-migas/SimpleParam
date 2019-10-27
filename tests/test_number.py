@@ -57,6 +57,14 @@ class TestNumberSetup(object):
         assert num_a.value == -100
 
     @staticmethod
+    def test_creation_nohardbounds_autobound():
+        """Test Number - correct initilization"""
+        value = -150.0
+
+        num_a = param.Number(value=value, auto_bound=True)
+        assert num_a.value == value
+
+    @staticmethod
     def test_allow_none():
         """Test Number - correct initilization"""
         value = None
@@ -107,17 +115,31 @@ class TestNumberSetup(object):
         assert num_a.kind == "Number"
 
     @staticmethod
-    def test_creation_outside_bounds():
+    def test_creation_outside_bounds_lower():
+        """Test Number - throw error due to incorrect initilization"""
+        with pytest.raises(ValueError) as __:
+            value = -1
+            __ = param.Number(value=value, hardbounds=[0, 41])
+
+    @staticmethod
+    def test_creation_outside_bounds_upper():
         """Test Number - throw error due to incorrect initilization"""
         with pytest.raises(ValueError) as __:
             value = 42
             __ = param.Number(value=value, hardbounds=[0, 41])
 
     @staticmethod
-    def test_creation_bounds_not_inclusive():
+    def test_creation_bounds_not_inclusive_lower():
         """Test Number - throw error due to incorrect initilization"""
         with pytest.raises(ValueError) as __:
             value = -42
+            __ = param.Number(value=value, hardbounds=[-42, 100], inclusive_bounds=[False, False])
+
+    @staticmethod
+    def test_creation_bounds_not_inclusive_upper():
+        """Test Number - throw error due to incorrect initilization"""
+        with pytest.raises(ValueError) as __:
+            value = 120
             __ = param.Number(value=value, hardbounds=[-42, 100], inclusive_bounds=[False, False])
 
     @staticmethod

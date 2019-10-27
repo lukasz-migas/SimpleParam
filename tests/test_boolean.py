@@ -102,6 +102,18 @@ class TestBooleanSetup(object):
             value = None
             __ = param.Boolean(value=value, allow_None=False)
 
+    @staticmethod
+    def test_notallow_none_int_0():
+        with pytest.raises(ValueError) as __:
+            value = 2
+            __ = param.Boolean(value=value, allow_None=False)
+
+    @staticmethod
+    def test_notallow_none_not_bool():
+        with pytest.raises(ValueError) as __:
+            value = "true"
+            __ = param.Boolean(value=value, allow_None=False)
+
 
 class TestBooleanOperations(object):
     """Test Boolean class operations"""

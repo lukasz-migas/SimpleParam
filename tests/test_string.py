@@ -161,3 +161,10 @@ class TestStringOperations(object):
         str_a = param.String(value=value)
         assert str_a.value == value
         assert "hel" in str_a.value
+
+    @staticmethod
+    def test_getitem():
+        value = "hello"
+        str_a = param.String(value=value)
+        assert str_a.value[0] == "h"
+        assert str_a.value[-1] == "o"

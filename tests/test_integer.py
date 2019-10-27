@@ -1,6 +1,8 @@
 """Test Integer class"""
-import pytest
+from __future__ import division
 import operator
+
+import pytest
 
 import simpleparam as param
 
@@ -9,7 +11,7 @@ class TestIntegerSetup(object):
     """Test Integer class"""
 
     @staticmethod
-    def test_creation_float():
+    def test_creation_int():
         """Test Integer - correct initilization"""
         value = 1
 

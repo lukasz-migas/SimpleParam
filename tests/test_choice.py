@@ -26,6 +26,16 @@ class TestChoiceSetup(object):
         assert choice.doc == doc
 
     @staticmethod
+    def test_str():
+        """Test Choice - correct initilization"""
+        value = "boo"
+        choices = ["boo", "foo"]
+        choice = param.Choice(value=value, choices=choices)
+        assert choice.value == value
+        assert choice.choices == choices
+        assert str(choice) == "Choice(name=param, value='boo', choices=['boo', 'foo'], doc='')"
+
+    @staticmethod
     def test_change_choices():
         """Test Choice - correct initilization"""
         value = "boo"
