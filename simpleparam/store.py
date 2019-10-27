@@ -30,6 +30,10 @@ class ParameterStore(object):
     def __repr__(self):
         return "{}(count={})".format(self._name, len(self.__dict__) - N_PROTECTED)
 
+    def __str__(self):
+        """Return a short representation of the name and class of this object."""
+        return "<{} {}>".format(self.__class__.__name__, self._name)
+
     def __iter__(self):
         return iter(self.__dict__)
 

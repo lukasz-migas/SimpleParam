@@ -20,6 +20,21 @@ class TestBoolean(object):
         assert config.param_int.value == 42
 
     @staticmethod
+    def test_variable_not_constant():
+        """Test ParameterStore - correct initilization of constant"""
+
+        class Config(param.ParameterStore):
+            def __init__(self):
+                param.ParameterStore.__init__(self)
+                self.const_int = param.Number(value=666, constant=False)
+
+        config = Config()
+        assert config.const_int.value == 666
+        value = 696
+        config.const_int = value
+        assert config.const_int.value == value
+
+    @staticmethod
     def test_variable_constant():
         """Test ParameterStore - correct initilization of constant"""
 
