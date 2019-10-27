@@ -1,6 +1,5 @@
 """Test Parameter class"""
 import operator
-
 import pytest
 
 import simpleparam as param
@@ -41,6 +40,13 @@ class TestParameterSetup(object):
         num_a = param.Parameter(value=value)
 
         assert num_a.kind == "Parameter"
+
+    @staticmethod
+    def test_setting_wrong():
+        """Test Parameter - correct initilization"""
+        with pytest.raises(ValueError) as __:
+            value = 11.01474
+            num_a = param.Parameter(value=value, allow_None="False")
 
 
 class TestParameterOperations(object):
