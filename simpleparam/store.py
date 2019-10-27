@@ -1,6 +1,7 @@
 """General class for storing parameters"""
 
 PROTECTED = ["_name"]
+N_PROTECTED = len(PROTECTED)
 
 
 class ParameterStore(object):
@@ -27,24 +28,20 @@ class ParameterStore(object):
             self.__dict__[name] = val
 
     def __repr__(self):
-        return "{}(count={})".format(self._name, len(self.__dict__) - len(PROTECTED))
+        return "{}(count={})".format(self._name, len(self.__dict__) - N_PROTECTED)
+
+    def __str__(self):
+        """Return a short representation of the name and class of this object."""
+        return "<{} {}>".format(self.__class__.__name__, self._name)
 
     def __iter__(self):
         return iter(self.__dict__)
-
-    def items(self):
-        """Return dictionary items"""
-        return self.__dict__.items()
-
-    def values(self):
-        """Return dictionary values"""
-        return self.__dict__.values()
 
     def export_as_json(self):
         """Exports current instance as JSON dictionary"""
         _export = dict()
 
-        for name, parameter in self.items():
+        for name, parameter in self.__dict__.items():
             # ignore reserved names
             if name in PROTECTED:
                 continue
@@ -61,7 +58,7 @@ class ParameterStore(object):
                         hardbounds=parameter.hardbounds,
                         kind=parameter.kind,
                     )
-                elif parameter.kind in ["Bool", "String", "Color"]:
+                elif parameter.kind in ["Boolean", "String", "Color"]:
                     _export[name] = dict(
                         name=parameter.name, value=parameter.value, doc=parameter.doc, kind=parameter.kind
                     )

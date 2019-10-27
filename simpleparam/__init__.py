@@ -4,6 +4,7 @@ Simplified version of the `param` library (https://param.pyviz.org/).
 `simpleparam` tries to emulate the best features of `param` by providing a subset of availabel classes/objects while
 making it slightly easier to use while also allowing easy expansion
 """
+import operator
 import re
 
 from .store import ParameterStore  # noqa
@@ -18,18 +19,17 @@ class Parameter(object):
     """
 
     __slots__ = [
+        "_value",
+        "_softbounds",
+        "_kind",
+        "_hardbounds",
         "name",
         "doc",
-        "_value",
-        "bounds",
-        "_softbounds",
-        "hardbounds",
         "saveable",
         "allow_None",
         "inclusive_bounds",
         "auto_bound",
         "step",
-        "_kind",
         "constant",
     ]
 
@@ -37,18 +37,81 @@ class Parameter(object):
         self.name = kws.get("name", "param")
         self.doc = kws.get("doc", "")
         self._value = kws.get("value", None)
-        self._softbounds = kws.get("softbounds", None)
-        self.hardbounds = kws.get("hardbounds", None)
-        self.allow_None = kws.get("allow_None", True)
-        self.auto_bound = kws.get("auto_bound", False)
-        self.inclusive_bounds = kws.get("inclusive_bounds", [True, True])
-        self.saveable = kws.get("saveable", True)
         self._kind = kws.get("kind", "Parameter")
-        self.constant = kws.get("constant", False)
+        self._softbounds = self._validate_bounds(kws.get("softbounds", None))
+        self._hardbounds = self._validate_bounds(kws.get("hardbounds", None))
+        self.allow_None = self._validate_bool(kws.get("allow_None", True))
+        self.auto_bound = self._validate_bool(kws.get("auto_bound", False))
+        self.inclusive_bounds = kws.get("inclusive_bounds", [True, True])
+        self.saveable = self._validate_bool(kws.get("saveable", True))
+        self.constant = self._validate_bool(kws.get("constant", False))
         self.step = kws.get("step", None)
 
-    def __repr__(self):
+    def __str__(self):
         return "Parameter(name='{}', value={}, doc='{}')".format(self.name, self.value, self.doc)
+
+    def __repr__(self):
+        return repr(self.value)
+
+    def __delete__(self, obj):
+        raise TypeError("Cannot delete '%s': Parameters deletion not allowed." % self.name)
+
+    def __add__(self, other):
+        return operator.add(self.value, other)
+
+    def __sub__(self, other):
+        return operator.sub(self.value, other)
+
+    def __mul__(self, other):
+        return operator.mul(self.value, other)
+
+    def __div__(self, other):
+        return operator.div(self.value, other)  # noqa
+
+    def __truediv__(self, other):
+        return operator.truediv(self.value, other)
+
+    def __floordiv__(self, other):
+        return operator.floordiv(self.value, other)
+
+    def __mod__(self, other):
+        return operator.mod(self.value, other)
+
+    def __pow__(self, other):
+        return operator.pow(self.value, other)
+
+    def __lt__(self, other):
+        return operator.lt(self.value, other)
+
+    def __le__(self, other):
+        return operator.le(self.value, other)
+
+    def __eq__(self, other):
+        return operator.eq(self.value, other)
+
+    def __ne__(self, other):
+        return operator.ne(self.value, other)
+
+    def __ge__(self, other):
+        return operator.ge(self.value, other)
+
+    def __gt__(self, other):
+        return operator.gt(self.value, other)
+
+    def __neg__(self):
+        return operator.neg(self.value)
+
+    def __pos__(self):
+        return operator.pos(self.value)
+
+    def __abs__(self):
+        return operator.abs(self.value)
+
+    def __lshift__(self, other):
+        return operator.lshift(self.value, other)
+
+    def __rshift__(self, other):
+        return operator.rshift(self.value, other)
 
     def _validate(self, val):
         """Implements validation for the parameter"""
@@ -59,6 +122,20 @@ class Parameter(object):
         if val in [True, False]:
             return val
         raise ValueError("Value must be a Boolean")
+
+    def _validate_bounds(self, val):
+        """Ensure bounds are correctly setup"""
+        if val is None:
+            return val
+
+        if isinstance(val, tuple):
+            val = list(val)
+
+        if isinstance(val, list):
+            if len(val) != 2:
+                raise ValueError("Bounds must be either set to 'None' or contain 2 values")
+
+        return val
 
     @property
     def value(self):
@@ -78,7 +155,7 @@ class Parameter(object):
     @kind.setter
     def kind(self, value):
         """Set `kind`"""
-        self._kind = self._validate(value)
+        self._kind = value
 
 
 class Number(Parameter):
@@ -91,8 +168,6 @@ class Number(Parameter):
 
         self.value = self._validate(self._value)
 
-    # Allow softbounds to be used like a normal attribute, as it
-    # probably should have been already (not _softbounds)
     @property
     def softbounds(self):
         """Get `softbounds`"""
@@ -101,7 +176,17 @@ class Number(Parameter):
     @softbounds.setter
     def softbounds(self, value):
         """Set `softbounds`"""
-        self._softbounds = value
+        self._softbounds = self._validate_bounds(value)
+
+    @property
+    def hardbounds(self):
+        """Get `hardbounds`"""
+        return self._hardbounds
+
+    @hardbounds.setter
+    def hardbounds(self, value):
+        """Set `hardbounds`"""
+        self._hardbounds = self._validate_bounds(value)
 
     def _validate(self, val):
         """
@@ -168,7 +253,7 @@ class Number(Parameter):
         else:
             upper = soft_upper
 
-        return (lower, upper)
+        return [lower, upper]
 
     def crop_to_bounds(self, val):
         """
@@ -222,7 +307,7 @@ class Integer(Number):
             return
 
         if not isinstance(val, int):
-            raise ValueError("Parameter '%s' must be an integer." % self.name)
+            raise ValueError("Parameter '{}' must be an integer not '{}'".format(self.name, type(val)))
 
         if self.auto_bound:
             val = self.crop_to_bounds(val)
@@ -249,13 +334,19 @@ class Boolean(Parameter):
         """
         if self.allow_None:
             if not isinstance(val, bool) and val is not None:
-                raise ValueError("Boolean '%s' only takes a Boolean value or None." % self.name)
+                if val in [0, 1]:
+                    val = bool(val)
+                else:
+                    raise ValueError("Boolean '%s' only takes a Boolean value or None." % self.name)
 
             if val is not True and val is not False and val is not None:
                 raise ValueError("Boolean '%s' must be True, False, or None." % self.name)
         else:
             if not isinstance(val, bool):
-                raise ValueError("Boolean '%s' only takes a Boolean value." % self.name)
+                if val in [0, 1]:
+                    val = bool(val)
+                else:
+                    raise ValueError("Boolean '%s' only takes a Boolean value." % self.name)
 
             if val is not True and val is not False:
                 raise ValueError("Boolean '%s' must be True or False." % self.name)
@@ -267,13 +358,20 @@ class String(Parameter):
     String class, allowing storing of `string` object
     """
 
-    __slots__ = ["name", "doc", "_value", "allow_None", "allow_any", "saveable", "constant"]
+    __slots__ = ["name", "doc", "_value", "allow_None", "allow_any", "saveable", "constant", "regex"]
 
-    def __init__(self, value, kind="String", **kws):
+    def __init__(self, value, regex=None, kind="String", **kws):
         super(String, self).__init__(value=value, kind=kind, **kws)
 
         self.allow_any = kws.get("allow_any", False)
+        self.regex = regex
         self.value = self._validate(self._value)
+
+    def __contains__(self, other):
+        return operator.contains(self.value, other)
+
+    def __getitem__(self, k):
+        return operator.getitem(self.value, k)
 
     def _validate(self, val):
         """
@@ -288,6 +386,9 @@ class String(Parameter):
         if not isinstance(val, str):
             raise ValueError("Parameter '%s' only takes string values" % (self.name))
 
+        if self.regex is not None and re.match(self.regex, val) is None:
+            raise ValueError("String '{}': '{}' does not match regex '{}'.".format(self.name, val, self.regex))
+
         return val
 
 
@@ -301,58 +402,48 @@ class Color(Parameter):
 
     def __init__(self, value=None, kind="Color", **kwargs):
         super(Color, self).__init__(value=value, allow_None=False, kind=kind, **kwargs)
-        self._validate(value)
+        self.value = self._validate(value)
 
     def _validate(self, val):
-        if self.allow_None and val is None:
-            return
         if not isinstance(val, str):
             raise ValueError("Color '%s' only takes a string value." % self.name)
         if not re.match("^#?(([0-9a-fA-F]{2}){3}|([0-9a-fA-F]){3})$", val):
             raise ValueError("Color '%s' only accepts valid RGB hex codes." % self.name)
 
+        return val
 
-class Option(object):
+
+class Option(Parameter):
     """
     Base class for `Choice` allowing specification of choices
     """
 
     __slots__ = ["name", "doc", "_value", "_choices", "saveable", "allow_None", "_kind", "constant"]
 
-    def __init__(self, **kws):
-        self.name = kws.get("name", "param")
-        self.doc = kws.get("doc", "")
-        self._value = kws.get("value", None)
+    def __init__(self, value=None, kind="Option", **kws):
+        super(Option, self).__init__(value=value, kind=kind, **kws)
         self._choices = kws.get("choices", [])
-        self.allow_None = kws.get("allow_None", True)
-        self.saveable = kws.get("saveable", True)
-        self._kind = kws.get("kind", "Option")
-        self.constant = kws.get("constant", False)
 
-    def __repr__(self):
-        return "Choice(name={}, value={}, choices=`{}`, doc='{})".format(self.name, self.value, self.choices, self.doc)
+    def __str__(self):
+        return "Choice(name={}, value='{}', choices={}, doc='{}')".format(self.name, self.value, self.choices, self.doc)
 
     def _validate(self, val):
         """Implements validation for the parameter"""
+        if self.allow_None and val is None:
+            return val
+
         if val in self.choices:
             return val
         raise ValueError("Value `{}` not in the provided choices: {}".format(val, self.choices))
 
     def _validate_choices(self, val):
         """Ensure choices are a list"""
-        if isinstance(val, list):
-            return val
-        raise ValueError("Choices must be a `list`")
-
-    @property
-    def value(self):
-        """Get `value`"""
-        return self._value
-
-    @value.setter
-    def value(self, value):
-        """Set `value`"""
-        self._value = self._validate(value)
+        if not isinstance(val, list):
+            raise ValueError("Choices must be a `list`")
+        if hasattr(self, "value"):
+            if self.value not in val:
+                print("Value not in the choice list")
+        return val
 
     @property
     def choices(self):
@@ -362,17 +453,9 @@ class Option(object):
     @choices.setter
     def choices(self, value):
         """Set `choices`"""
-        self._choices = self._validate_choices(value)
-
-    @property
-    def kind(self):
-        """Get `_kind`"""
-        return self._kind
-
-    @kind.setter
-    def kind(self, value):
-        """Set `_kind`"""
-        self._kind = self._validate(value)
+        value = self._validate_choices(value)
+        __ = self._validate(self.value)
+        self._choices = value
 
 
 class Choice(Option):

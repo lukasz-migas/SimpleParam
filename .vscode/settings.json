@@ -3,5 +3,6 @@
         "activityBar.background": "#12350D",
         "titleBar.activeBackground": "#194A12",
         "titleBar.activeForeground": "#F6FDF5"
-    }
+    },
+    "python.pythonPath": "C:\\Miniconda3\\envs\\jupyter\\python.exe"
 }
