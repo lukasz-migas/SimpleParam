@@ -1,10 +1,12 @@
-"""Test Boolean class"""
+"""Test ParamStore class"""
 import pytest
 
 import simpleparam as param
 
+ip_regex = r"^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
 
-class TestBoolean(object):
+
+class TestParamStore(object):
     """Test Boolean class"""
 
     @staticmethod
@@ -64,12 +66,13 @@ class TestBoolean(object):
                 self.param_color = param.Color(value="#FFF000")
                 self.param_choice = param.Choice(value="boo", choices=["boo", "baa"])
                 self.param_str = param.String("hello")
+                self.param_regex = param.String(value="127.0.0.1", regex=ip_regex)
                 self.param_bool = param.Boolean(False)
                 self.param_option = param.Option(value=None, choices=[True, False])
 
         config = Config()
         export_dict = config.export_as_json()
-        assert len(export_dict) == 7
+        assert len(export_dict) == 8
 
     @staticmethod
     def test_variables_not_exportable():
@@ -82,7 +85,7 @@ class TestBoolean(object):
 
         config = Config()
         export_dict = config.export_as_json()
-        assert len(export_dict) == 0
+        assert not export_dict
 
     @staticmethod
     def test_str():

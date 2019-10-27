@@ -134,7 +134,7 @@ class TestBooleanOperations(object):
         bool_a = param.Boolean(value=value)
         assert bool_a.value == value
         bool_a.value -= 1
-        assert bool_a.value == False
+        assert bool_a.value is False
 
     @staticmethod
     def test_div():
