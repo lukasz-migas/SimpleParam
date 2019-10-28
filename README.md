@@ -122,3 +122,11 @@ Directly from GitHub
 ```python
 pip install git+https://github.com/lukasz-migas/SimpleParam.git
 ```
+
+
+## Planned features
+
+- add 'List', 'Dict' classes
+- add 'Range' class that will allow setting two values
+- rename 'Color' to 'ColorHEX' or add 'modes': RGB or HEX
+- add Array class 
