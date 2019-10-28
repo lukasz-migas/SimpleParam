@@ -7,10 +7,13 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/775f9aedd36b49de9400362fe3a57918)](https://www.codacy.com/manual/lukasz-migas/SimpleParam?utm_source=github.com&utm_medium=referral&utm_content=lukasz-migas/SimpleParam&utm_campaign=Badge_Grade)
 [![CodeFactor](https://www.codefactor.io/repository/github/lukasz-migas/simpleparam/badge)](https://www.codefactor.io/repository/github/lukasz-migas/simpleparam)
 
-A copycat of the [param](https://param.pyviz.org/) library with simpler interface.
+## About
 
-This library is certainly incomplete and is missing a lot of the awesome features of `param`, however, provides a nice
-starting point.
+`SimpleParam` was inspired by the [param](https://param.pyviz.org/) library which offers lots of near features in a very
+small package, however, with somewhat tricky codebase. In `SimpleParam`, you can either create `Parameter` or
+`ParameterStore` using simple synthax.
+
+`SimpleParam` is certainly incomplete, missing a lot of awesome features of `param` and has not been battle-tested yet.
 
 ## Usage
 
@@ -112,11 +115,10 @@ number = param.Number(42, hardbounds=[0, 41], auto_bound=True)
 >>> Parameter(name='param', value=41, doc='')
 ```
 
-## Note
+## Instalation
 
-Missing features:
+Directly from GitHub
 
-- currently Parameter and ParameterStore cannot be pickled
-- classes such as `Path`, `List`, `Tuple` or `Selector` are missing
-- no tests have been written yet
-- api is not settled
+```python
+pip install git+https://github.com/lukasz-migas/SimpleParam.git
+```

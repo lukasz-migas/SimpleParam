@@ -8,6 +8,7 @@ import operator
 import re
 
 from .store import ParameterStore  # noqa
+from .utilities import get_occupied_slots
 from .utilities import is_number
 
 __all__ = ["Parameter", "Number", "Integer", "String", "Boolean", "Choice", "Option", "Color", "ParameterStore"]
@@ -18,43 +19,22 @@ class Parameter(object):
     Base class for most of the other classes
     """
 
-    __slots__ = [
-        "_value",
-        "_softbounds",
-        "_kind",
-        "_hardbounds",
-        "name",
-        "doc",
-        "saveable",
-        "allow_None",
-        "inclusive_bounds",
-        "auto_bound",
-        "step",
-        "constant",
-    ]
+    __slots__ = ["_value", "_kind", "name", "doc", "saveable", "allow_None", "constant"]
 
     def __init__(self, **kws):
         self.name = kws.get("name", "param")
         self.doc = kws.get("doc", "")
         self._value = kws.get("value", None)
         self._kind = kws.get("kind", "Parameter")
-        self._softbounds = self._validate_bounds(kws.get("softbounds", None))
-        self._hardbounds = self._validate_bounds(kws.get("hardbounds", None))
-        self.allow_None = self._validate_bool(kws.get("allow_None", True))
-        self.auto_bound = self._validate_bool(kws.get("auto_bound", False))
-        self.inclusive_bounds = kws.get("inclusive_bounds", [True, True])
         self.saveable = self._validate_bool(kws.get("saveable", True))
         self.constant = self._validate_bool(kws.get("constant", False))
-        self.step = kws.get("step", None)
+        self.allow_None = self._validate_bool(kws.get("allow_None", True))
 
     def __str__(self):
         return "Parameter(name='{}', value={}, doc='{}')".format(self.name, self.value, self.doc)
 
     def __repr__(self):
         return repr(self.value)
-
-    def __delete__(self, obj):
-        raise TypeError("Cannot delete '%s': Parameters deletion not allowed." % self.name)
 
     def __add__(self, other):
         return operator.add(self.value, other)
@@ -117,25 +97,27 @@ class Parameter(object):
         """Implements validation for the parameter"""
         return val
 
+    def __getstate__(self):
+        """
+        All Parameters have slots, not a dict, so we have to support
+        pickle and deepcopy ourselves.
+        """
+        state = {}
+        for slot in get_occupied_slots(self):
+            state[slot] = getattr(self, slot)
+        return state
+
+    def __setstate__(self, state):
+        # set values of __slots__ (instead of in non-existent __dict__)
+
+        for (k, v) in state.items():
+            setattr(self, k, v)
+
     def _validate_bool(self, val):
         """Ensure value is either True/False"""
         if val in [True, False]:
             return val
         raise ValueError("Value must be a Boolean")
-
-    def _validate_bounds(self, val):
-        """Ensure bounds are correctly setup"""
-        if val is None:
-            return val
-
-        if isinstance(val, tuple):
-            val = list(val)
-
-        if isinstance(val, list):
-            if len(val) != 2:
-                raise ValueError("Bounds must be either set to 'None' or contain 2 values")
-
-        return val
 
     @property
     def value(self):
@@ -160,11 +142,37 @@ class Parameter(object):
 
 class Number(Parameter):
     """
-    Number class, allowing storing of `numeric` objects
+    A Number (Real) class, with default value and soft- and hard-bounds
+
+    Each `Number` has two sets of bounds, either `softbounds' or 'hardbounds'. As the names suggest,
+    `hardbounds` will throw an exception if the the default value is set outside of the bounds (unless
+    the `auto_bound` value is set to True). The default bounds are [None, None], meaning there are actually no
+    hard bounds. One or both bounds can be set by specifying a value (e.g. hardbounds=[None,10]
+    means there is no lower bound, and an upper bound of 10). Bounds are inclusive by default, but exclusivity
+    can be specified for each bound by setting inclusive_bounds (e.g. inclusive_bounds=(True,False)
+    specifies an exclusive upper bound).
+
+    As a special case, if allow_None=True (which is true by default if the parameter has a default of
+    None when declared) then a value of None is also allowed.
+
+    ``softbounds`` are present to indicate the typical range of the parameter, but are not enforced.
+    Setting the soft bounds allows, for instance, a GUI to know what values to display on sliders for the Number.
+
+    Example of creating a Number::
+
+      AB = Number(default=0.5, bounds=(None,10), softbounds=(0,1), doc='Distance from A to B.')
     """
+
+    __slots__ = ["_softbounds", "_hardbounds", "inclusive_bounds", "auto_bound", "step"]
 
     def __init__(self, value, kind="Number", **kws):
         super(Number, self).__init__(value=value, kind=kind, **kws)
+
+        self._softbounds = self._validate_bounds(kws.get("softbounds", None))
+        self._hardbounds = self._validate_bounds(kws.get("hardbounds", None))
+        self.auto_bound = self._validate_bool(kws.get("auto_bound", False))
+        self.inclusive_bounds = kws.get("inclusive_bounds", [True, True])
+        self.step = kws.get("step", None)
 
         self.value = self._validate(self._value)
 
@@ -205,13 +213,27 @@ class Number(Parameter):
         self._check_bounds(val)
         return val
 
+    def _validate_bounds(self, val):
+        """Ensure bounds are correctly setup"""
+        if val is None:
+            return val
+
+        if isinstance(val, tuple):
+            val = list(val)
+
+        if isinstance(val, list):
+            if len(val) != 2:
+                raise ValueError("Bounds must be either set to 'None' or contain 2 values")
+
+        return val
+
     def _check_bounds(self, val):
+        """Check bounds and if outside, thrown an exception"""
 
         if self.hardbounds is not None:
             vmin, vmax = self.hardbounds
             incmin, incmax = self.inclusive_bounds
 
-            # Could simplify: see https://github.com/ioam/param/issues/83
             if vmax is not None:
                 if incmax is True:
                     if not val <= vmax:
@@ -293,9 +315,9 @@ class Number(Parameter):
 
 
 class Integer(Number):
-    """
-    Integer class, allowing storing of `integer` objects
-    """
+    """Numeric Parameter required to be an Integer"""
+
+    __slots__ = []
 
     def __init__(self, value, kind="Integer", **kws):
         super(Integer, self).__init__(value=value, kind=kind, **kws)
@@ -318,9 +340,9 @@ class Integer(Number):
 
 
 class Boolean(Parameter):
-    """
-    Bool class, allowing storing of `boolean` objects
-    """
+    """Binary or tristate Boolean Parameter."""
+
+    __slots__ = []
 
     def __init__(self, value, kind="Boolean", **kws):
         super(Boolean, self).__init__(value=value, kind=kind, **kws)
@@ -328,10 +350,7 @@ class Boolean(Parameter):
         self.value = self._validate(self._value)
 
     def _validate(self, val):
-        """
-        Checks that the value is numeric and that it is within the hard
-        bounds; if not, an exception is raised.
-        """
+        """Checks to ensure the set value is a boolean or None"""
         if self.allow_None:
             if not isinstance(val, bool) and val is not None:
                 if val in [0, 1]:
@@ -354,9 +373,7 @@ class Boolean(Parameter):
 
 
 class String(Parameter):
-    """
-    String class, allowing storing of `string` object
-    """
+    """String Parameter"""
 
     __slots__ = ["name", "doc", "_value", "allow_None", "allow_any", "saveable", "constant", "regex"]
 
@@ -393,12 +410,9 @@ class String(Parameter):
 
 
 class Color(Parameter):
-    """
-    Color parameter defined as a hex RGB string with an optional #
-    prefix.
-    """
+    """Color parameter defined as a hex RGB string with an optional # prefix."""
 
-    __slots__ = ["name", "doc", "_value", "saveable", "_kind", "allow_None", "constant"]
+    __slots__ = []
 
     def __init__(self, value=None, kind="Color", **kwargs):
         super(Color, self).__init__(value=value, allow_None=False, kind=kind, **kwargs)
@@ -414,11 +428,9 @@ class Color(Parameter):
 
 
 class Option(Parameter):
-    """
-    Base class for `Choice` allowing specification of choices
-    """
+    """Base class for `Choice` allowing specification of choices"""
 
-    __slots__ = ["name", "doc", "_value", "_choices", "saveable", "allow_None", "_kind", "constant"]
+    __slots__ = ["_choices"]
 
     def __init__(self, value=None, kind="Option", **kws):
         super(Option, self).__init__(value=value, kind=kind, **kws)
@@ -462,6 +474,8 @@ class Choice(Option):
     """
     Choice class, allowing specifying list of choices and default  value
     """
+
+    __slots__ = []
 
     def __init__(self, value, choices, kind="Choice", **kws):
         super(Choice, self).__init__(value=value, choices=choices, kind=kind, **kws)

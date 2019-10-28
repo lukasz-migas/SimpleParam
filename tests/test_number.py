@@ -81,6 +81,15 @@ class TestNumberSetup(object):
         assert num_a.softbounds == softbounds
 
     @staticmethod
+    def test_creation_softbounds_tuple():
+        """Test Number - correct initilization"""
+        value = -42.0
+        softbounds = (-100, 100)
+        num_a = param.Number(value=value, softbounds=softbounds)
+        assert num_a.value == value
+        assert num_a.softbounds == list(softbounds)
+
+    @staticmethod
     def test_creation_set_softbounds_get_softbounds():
         """Test Number - correct initilization"""
         value = 42.01

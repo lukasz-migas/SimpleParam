@@ -48,28 +48,30 @@ class ParameterStore(object):
 
             # only export saveable objects
             if parameter.saveable:
-                # kind-specific actions
-                if parameter.kind in ["Parameter", "Number", "Integer"]:
-                    _export[name] = dict(
-                        name=parameter.name,
-                        value=parameter.value,
-                        doc=parameter.doc,
-                        softbounds=parameter.softbounds,
-                        hardbounds=parameter.hardbounds,
-                        kind=parameter.kind,
+                # base attributes of all parameters
+                _export[name] = dict(
+                    name=parameter.name,
+                    value=parameter.value,
+                    doc=parameter.doc,
+                    kind=parameter.kind,
+                    allow_None=parameter.allow_None,
+                )
+                # kind-specific attributes
+                if parameter.kind in ["Number", "Integer"]:
+                    _export[name].update(
+                        dict(
+                            auto_bound=parameter.auto_bound,
+                            softbounds=parameter.softbounds,
+                            hardbounds=parameter.hardbounds,
+                            inclusive_bounds=parameter.inclusive_bounds,
+                            step=parameter.step,
+                            allow_None=parameter.allow_None,
+                        )
                     )
-                elif parameter.kind in ["Boolean", "String", "Color"]:
-                    _export[name] = dict(
-                        name=parameter.name, value=parameter.value, doc=parameter.doc, kind=parameter.kind
-                    )
+                elif parameter.kind in ["String"]:
+                    _export[name].update(dict(allow_any=parameter.allow_any, regex=parameter.regex))
                 elif parameter.kind in ["Option", "Choice"]:
-                    _export[name] = dict(
-                        name=parameter.name,
-                        value=parameter.value,
-                        doc=parameter.doc,
-                        choices=parameter.choices,
-                        kind=parameter.kind,
-                    )
+                    _export[name].update(dict(choices=parameter.choices))
 
         # return data
         return _export

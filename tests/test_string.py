@@ -163,8 +163,22 @@ class TestStringOperations(object):
         assert "hel" in str_a.value
 
     @staticmethod
+    def test_contains_basemethod():
+        value = "hello"
+        str_a = param.String(value=value)
+        assert str_a.value == value
+        assert str_a.__contains__("hel")
+
+    @staticmethod
     def test_getitem():
         value = "hello"
         str_a = param.String(value=value)
         assert str_a.value[0] == "h"
         assert str_a.value[-1] == "o"
+
+    @staticmethod
+    def test_getitem_basemethod():
+        value = "hello"
+        str_a = param.String(value=value)
+        assert str_a.__getitem__(0) == "h"
+        assert str_a.__getitem__(-1) == "o"
