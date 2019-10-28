@@ -92,7 +92,7 @@ class TestParameterOperations(object):
         assert num_a.value == value
 
         new_value = value / 2
-        num_a.value = num_a.__floordiv__(2)
+        num_a.value = num_a.__truediv__(2)
         assert num_a.value == new_value
 
     @staticmethod
