@@ -123,10 +123,23 @@ Directly from GitHub
 pip install git+https://github.com/lukasz-migas/SimpleParam.git
 ```
 
+or in development mode
+
+```python
+git clone git+https://github.com/lukasz-migas/SimpleParam.git
+
+cd SimpleParam
+
+python setup.py develop
+```
+
+## Requirements
+
+SimpleParam has no external requirements and works in py2 and py3.
+
 
 ## Planned features
 
 - add 'List', 'Dict' classes
-- add 'Range' class that will allow setting two values
 - rename 'Color' to 'ColorHEX' or add 'modes': RGB or HEX
-- add Array class 
+- add Array class

@@ -339,6 +339,37 @@ class Integer(Number):
         return val
 
 
+class Range(Number):
+    """Numeric Parameter which can be either Number or Integer, however, must have two values"""
+
+    __slots__ = []
+
+    def __init__(self, value, kind="Range", **kws):
+        super(Range, self).__init__(value=value, kind=kind, **kws)
+
+        self.value = self._validate(self._value)
+
+    def _validate(self, val):
+        """
+        Checks that the value is numeric and that it is within the hard
+        bounds; if not, an exception is raised.
+        """
+        if self.allow_None and val is None:
+            return val
+
+        if len(val) != 2:
+            raise ValueError("Range parameter '%s' must have two values" % (self.name))
+
+        if any([not is_number(_val) for _val in val]):
+            raise ValueError("Parameter '%s' only takes numeric values" % (self.name))
+
+        if self.auto_bound:
+            val = [self.crop_to_bounds(_val) for _val in val]
+
+        [self._check_bounds(_val) for _val in val]
+        return val
+
+
 class Boolean(Parameter):
     """Binary or tristate Boolean Parameter."""
 
