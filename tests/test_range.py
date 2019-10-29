@@ -199,3 +199,24 @@ class TestRangeSetup(object):
         with pytest.raises(ValueError) as __:
             value = [0, None]
             __ = param.Range(value=value, allow_None=True)
+
+
+class TestRangeOperations(object):
+    """Test String class operations"""
+
+    @staticmethod
+    def test_getitem():
+        value = [0.0, 100.0]
+
+        num_a = param.Range(value=value)
+        assert num_a.value == value
+        assert num_a[0] == value[0]
+        assert num_a[1] == value[1]
+
+    @staticmethod
+    def test_getitem():
+        with pytest.raises(ValueError) as __:
+            value = None
+            num_a = param.Range(value=value)
+            assert num_a.value == value
+            num_a[0]

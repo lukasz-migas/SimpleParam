@@ -369,6 +369,11 @@ class Range(Number):
         [self._check_bounds(_val) for _val in val]
         return val
 
+    def __getitem__(self, k):
+        if isinstance(self.value, list):
+            return operator.getitem(self.value, k)
+        raise ValueError("Range parameter must be a list to be subscriptable")
+
 
 class Boolean(Parameter):
     """Binary or tristate Boolean Parameter."""
