@@ -1,6 +1,4 @@
 """Test Number class"""
-import operator
-
 import pytest
 
 import simpleparam as param
@@ -159,7 +157,7 @@ class TestRangeSetup(object):
             __ = param.Range(value=value, allow_None=False)
 
     @staticmethod
-    def test_creation_float():
+    def test_creation_float_not_range():
         """Test Number - throw error due to incorrect initilization"""
         with pytest.raises(TypeError) as __:
             value = 1412.0
@@ -214,7 +212,7 @@ class TestRangeOperations(object):
         assert num_a[1] == value[1]
 
     @staticmethod
-    def test_getitem():
+    def test_getitem_none():
         with pytest.raises(ValueError) as __:
             value = None
             num_a = param.Range(value=value)

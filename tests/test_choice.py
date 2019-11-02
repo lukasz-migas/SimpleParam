@@ -89,3 +89,17 @@ class TestChoiceSetup(object):
             value = None
             choices = [True, False]
             choice = param.Choice(value=value, choices=choices, allow_None=False)
+
+
+class TestChoiceOperations(object):
+    """Test Boolean class operations"""
+
+    @staticmethod
+    def test_add():
+        """Test Boolean - correct initilization"""
+        value = False
+        choices = [True, False]
+        choice = param.Choice(value=value, choices=choices)
+        assert choice.value == value
+        assert choice.choices == choices
+        assert False in choices

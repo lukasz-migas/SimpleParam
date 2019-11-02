@@ -15,9 +15,7 @@ __all__ = ["Parameter", "Number", "Integer", "String", "Boolean", "Choice", "Opt
 
 
 class Parameter(object):
-    """
-    Base class for most of the other classes
-    """
+    """Base class for most of the other classes"""
 
     __slots__ = ["_value", "_kind", "name", "doc", "saveable", "allow_None", "constant"]
 
@@ -31,7 +29,9 @@ class Parameter(object):
         self.allow_None = self._validate_bool(kws.get("allow_None", True))
 
     def __str__(self):
-        return "Parameter(name='{}', value={}, doc='{}')".format(self.name, self.value, self.doc)
+        return str(self.value)
+
+    #         return "Parameter(name='{}', value={}, doc='{}')".format(self.name, self.value, self.doc)
 
     def __repr__(self):
         return repr(self.value)
@@ -93,10 +93,6 @@ class Parameter(object):
     def __rshift__(self, other):
         return operator.rshift(self.value, other)
 
-    def _validate(self, val):
-        """Implements validation for the parameter"""
-        return val
-
     def __getstate__(self):
         """
         All Parameters have slots, not a dict, so we have to support
@@ -109,9 +105,12 @@ class Parameter(object):
 
     def __setstate__(self, state):
         # set values of __slots__ (instead of in non-existent __dict__)
-
         for (k, v) in state.items():
             setattr(self, k, v)
+
+    def _validate(self, val):
+        """Implements validation for the parameter"""
+        return val
 
     def _validate_bool(self, val):
         """Ensure value is either True/False"""
@@ -159,8 +158,7 @@ class Number(Parameter):
     Setting the soft bounds allows, for instance, a GUI to know what values to display on sliders for the Number.
 
     Example of creating a Number::
-
-      AB = Number(default=0.5, bounds=(None,10), softbounds=(0,1), doc='Distance from A to B.')
+    AB = Number(default=0.5, bounds=(None,10), softbounds=(0,1), doc='Distance from A to B.')
     """
 
     __slots__ = ["_softbounds", "_hardbounds", "inclusive_bounds", "auto_bound", "step"]
@@ -349,6 +347,11 @@ class Range(Number):
 
         self.value = self._validate(self._value)
 
+    def __getitem__(self, k):
+        if isinstance(self.value, list):
+            return operator.getitem(self.value, k)
+        raise ValueError("Range parameter must be a list to be subscriptable")
+
     def _validate(self, val):
         """
         Checks that the value is numeric and that it is within the hard
@@ -369,11 +372,6 @@ class Range(Number):
         [self._check_bounds(_val) for _val in val]
         return val
 
-    def __getitem__(self, k):
-        if isinstance(self.value, list):
-            return operator.getitem(self.value, k)
-        raise ValueError("Range parameter must be a list to be subscriptable")
-
 
 class Boolean(Parameter):
     """Binary or tristate Boolean Parameter."""
@@ -384,6 +382,9 @@ class Boolean(Parameter):
         super(Boolean, self).__init__(value=value, kind=kind, **kws)
 
         self.value = self._validate(self._value)
+
+    def __bool__(self):
+        return self.value
 
     def _validate(self, val):
         """Checks to ensure the set value is a boolean or None"""
@@ -474,6 +475,9 @@ class Option(Parameter):
 
     def __str__(self):
         return "Choice(name={}, value='{}', choices={}, doc='{}')".format(self.name, self.value, self.choices, self.doc)
+
+    def __contains__(self, other):
+        return operator.contains(self.value, other)
 
     def _validate(self, val):
         """Implements validation for the parameter"""

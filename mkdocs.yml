@@ -1,0 +1,58 @@
+# Site settings
+site_name: SimpleParam
+site_description: "SimpleParam: simplified project parameters"
+site_author: Lukasz G. Migas
+
+copyright: <a href='http://github.com/lukasz-migas'>Lukasz G. Migas</a>
+
+site_url: https://msalign.lukasz-migas.com
+repo_url: https://github.com/lukasz-migas/SimpleParam
+edit_uri: https://github.com/lukasz-migas/SimpleParam/tree/master/docs
+
+use_directory_urls: false
+
+google_analytics: ["UA-130097236-1", "https://simpleparam.lukasz-migas.com"]
+docs_dir: "docs"
+site_dir: "site"
+
+markdown_extensions:
+  - admonition
+  - codehilite
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:pymdownx.emoji.to_svg
+  - toc:
+      permalink: true
+
+# Extra CCS
+extra_css:
+  - css/justify.css
+  - css/changelog.css
+
+# Page layout
+nav:
+  - Home: index.md
+  - Installation: installation.md
+  - Usage: usage.md
+  - About: about.md
+
+theme:
+  name: material
+  # logo: 'assets/images/logo.svg'
+  # favicon: 'assets/images/favicon.ico'
+  language: "en"
+  include_sidebar: true
+  palette:
+    primary: "blue grey"
+    accent: "light green"
+  feature:
+    tabs: false
+
+extra:
+  version: 0.1.2
+  social:
+    - type: "github"
+      link: "https://github.com/lukasz-migas"
+    - type: "twitter"
+      link: "https://twitter.com/munieq11"
+    - type: "link"
+      link: "https://lukasz-migas.com"
