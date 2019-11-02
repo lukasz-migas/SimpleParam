@@ -151,3 +151,15 @@ class TestBooleanOperations(object):
             value = True
             bool_a = param.Boolean(value=value)
             bool_a.value *= 0.5
+
+    @staticmethod
+    def test_bool():
+        """Test Boolean - correct initilization"""
+        value = True
+        bool_a = param.Boolean(value=value)
+        assert bool_a.value == value
+        assert bool(bool_a) == bool(value)
+        value = False
+        bool_a.value = value
+        assert bool_a.value == value
+        assert bool(bool_a) == bool(value)

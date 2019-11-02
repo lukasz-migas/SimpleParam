@@ -69,10 +69,14 @@ class TestParamStore(object):
                 self.param_regex = param.String(value="127.0.0.1", regex=ip_regex)
                 self.param_bool = param.Boolean(False)
                 self.param_option = param.Option(value=None, choices=[True, False])
+                self.param_range = param.Range(value=[-100, 100], hardbounds=[-200, None])
+
+                # non-param value which will not be taken into account during the count
+                self.value = 123
 
         config = Config()
         export_dict = config.export_as_json()
-        assert len(export_dict) == 8
+        assert len(export_dict) == 9
 
     @staticmethod
     def test_variables_not_exportable():

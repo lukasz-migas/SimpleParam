@@ -19,6 +19,7 @@ class Config(param.ParameterStore):
         self.param_regex = param.String(value="127.0.0.1", regex=ip_regex)
         self.param_bool = param.Boolean(False)
         self.param_option = param.Option(value=None, choices=[True, False])
+        self.param_range = param.Range(value=[-100, 100], hardbounds=[-200, None])
 
 
 class TestParamStorePickle(object):
