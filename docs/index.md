@@ -11,8 +11,8 @@
 
 ## About
 
-`SimpleParam` was inspired by the [param](https://param.pyviz.org/) library which offers lots of neat features in a very
-small package, however, with somewhat tricky codebase. In `SimpleParam`, you can either create `Parameter` or
+`SimpleParam` was inspired by the [param](https://param.pyviz.org/) library which offers lots of neat features in a
+small package, however `param` has a tricky codebase. In `SimpleParam` you can either create `Parameter` or
 `ParameterStore` using simple synthax.
 
 `SimpleParam` is certainly not complete and is missing a lot of awesome features of `param` and of course, has not been battle-tested yet. Missing features (such as `Array`, `List`, etc) will be added as my other projects that use `SimpleParam` will require them.
