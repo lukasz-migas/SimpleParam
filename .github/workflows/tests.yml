@@ -1,4 +1,4 @@
-name: Python package
+name: SimpleParam: install and test
 
 on: [push]
 
