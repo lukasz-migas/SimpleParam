@@ -4,10 +4,8 @@ cache:
   pip: true
 before_script:
   - pip install --upgrade tox setuptools virtualenv pytest
-
 matrix:
   include:
-    # linux
     - python: 2.7
       env: TOXENV=py27-pytest
     - python: 3.4
@@ -26,66 +24,35 @@ matrix:
       env: TOXENV=py37-pylint
     - python: 3.7
       env: TOXENV=py37-pre
-    # macOS
-    # - python: 2.7
-    #   env: TOXENV=py27-pytest
-    #   os: osx
-    # - python: 3.4
-    #   env: TOXENV=py34-pytest
-    #   os: osx
-    # - python: 3.5
-    #   env: TOXENV=py35-pytest
-    #   os: osx
-    # - python: 3.6
-    #   env: TOXENV=py36-pytest
-    #   os: osx
-    # - python: 3.7
-    #   env: TOXENV=py37-pytest
-    #   os: osx
-    # - python: pypy
-    #   env: TOXENV=pypy-pytest
-    #   os: osx
-    # linters
     - python: 3.7
       env: TOXENV=py37-flake8
     - python: 3.7
       env: TOXENV=py37-pylint
     - python: 3.7
       env: TOXENV=py37-pre
-    # coverage
     - env: TEST=coverage
       os: linux
       python: 3.6
-
 install:
   - pip install --upgrade pip || pip3 install --upgrade pip
   - pip install git+https://github.com/lukasz-migas/SimpleParam.git
-  - if [ "${TEST}" == "coverage" ]; then
-    pip install codecov pytest==3.6 pytest-cov pytest-sugar pytest-travis-fold;
-    fi;
-
+  - if [ "${TEST}" == "coverage" ]; then pip install codecov pytest==3.6 pytest-cov
+    pytest-sugar pytest-travis-fold; fi;
 script:
   - SRC_DIR=$(pwd)
   - echo $SRC_DIR
   - ls || dir
-  - if [[ "${TEST}" == "coverage" ]]; then
-    py.test --cov;
-    else tox;
-    fi;
-
+  - if [[ "${TEST}" == "coverage" ]]; then py.test --cov; else tox; fi;
 notifications:
   email: false
-
 after_success:
-  - if [ "${TEST}" == "coverage" ]; then
-    codecov --token=38b70ce4-9b10-4aee-b422-fe9e92cc2978;
+  - if [ "${TEST}" == "coverage" ]; then codecov --token=38b70ce4-9b10-4aee-b422-fe9e92cc2978;
     fi
 
 deploy:
-provider: pypi
-user: lukasz-migas
-password:
-  secure: ZPeJTWVZ2jfBTATn4Pa8jkYqo83aP8hzf5JaE/dtkOLdcAEKiqwNz3hUc4mTSuwGD3wMCWjsQC0UICQjYeA+evOn/styjcGX4iHJ4I985FmkjdjYkl2NUA4uR3jq1KYRuCy57zdN3vJc9y/eJL9w5s65erwk2oI2KXmKhNTNEu5pHL9HzVLy+s4HWdJimLnIL7LHJbg76DBVRSB6Y2dED/M6RWu1D99Xaw3d7CA5fC5X/ysRo3R6j0X0sV9yt1HMHSig1/kUSMrGEEbvPfREWMSwYDzP+Ezv/EfeCLjLiPU1SLDdAMIbiV4M+SU013W0nuM08yzRx5sMyd5qeKER9RvVE0z+Hf49aH2X3gq4tEY+GL3onPeI5wVO66jFsyaHasHtZSvOQyRGJE0HwX/a1jucGNsKUxO4UXrG4ax16JMH6G+bExMj/M7gid0KY/lu4o8bKsKN4cM4jqrBchG4VDCV0SnhqYOJTiEV+n01/psMxlrfCpKlZecZYsvZ0yeTJmZ96m6I3OsoCzNzB05lMCPfJg3oQZ5x09d0lY2nJoH1hrkZqIn65VeQ7kVYHIj0xJz1FCs5CRMeGg3nwhfeabFjxHaZAuT+7jnPH9Xi4Ztd9x+kWWSCrFhb3/id9VvxeWwT2HD/+oU3c4+qAFOXhGxEomODmifx/zW4t96pkwM=
-distributions: "sdist bdist_wheel --universal"
-skip_existing: true
-skip_cleanup: true
+  provider: pypi
+  user: "__token__"
+  password:
+    secure: WYpBY9Z7M2FQk6/8zUf+sS8W+BKnTI2OG3Rb0nEBOjU4Er9cBS8OurfvBaj4sVgviVL0LE6enAWldJ8gOsNG+jBKOoLW8BHM9CFB68ijih/UGFK/oWmkFTWGeKyfPmLuJkcaHLlCdZYQ4JoK77J/ae1MCheWy6IpV+snDvc9B27NlG4BN/xI6zeTjyN/MxJEOA/wj/VBH2H8UFhpcvxn57dcUgZ9w6J9RtUkql3SroOuzgv5tHd4dqgoO3U3GoEuDvQw6A6DBq9+Y0tiv1c87pr5KyHtRMm+D4IuPyPVuvU3zlk4K6ZHlokkOU+zdebMp5qmzHdhOtwX1DkUJzu2P1/rVwJvhdTaDcB6/mBLIdLDS1Ez5hCu3t1yvz4DIwy7A5LGC64aeI8bmYybjXJKxll1vowYt/SSVM1FjbQrwBqi4d8JKIaQUFKT8b0XpD8oK/XV2lf3feAghcYfl3lgw6ogqjifibECdFWJFMRB54yBsRYsjnJR0qw/xFk7jwzi87xDxAmdhWrLlfvPx/DDm1FY+W2zm8WtIxiHQs0loH144uol9YcHuaHsWWV+ZzCpLWYyk/4DHjJiPEyhmdEpMgLujh1mDoGgkEbcwpwAG4+nUONL8QpvBntG5F4ixYxUac4dX+xIg4y7Cuqu0DOjbcM0qoDs2YhA/U8Wv3/bYmc=
+  skip_existing: true
+  skip_cleanup: true
