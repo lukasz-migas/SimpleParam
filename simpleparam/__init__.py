@@ -4,12 +4,18 @@ Simplified version of the `param` library (https://param.pyviz.org/).
 `simpleparam` tries to emulate the best features of `param` by providing a subset of availabel classes/objects while
 making it slightly easier to use while also allowing easy expansion
 """
+from __future__ import division
+
 import operator
 import re
+import sys
 
 from .store import ParameterStore  # noqa
 from .utilities import get_occupied_slots
 from .utilities import is_number
+
+if sys.version_info[0] == 3:
+    unicode = str
 
 __all__ = ["Parameter", "Number", "Integer", "String", "Boolean", "Choice", "Option", "Color", "ParameterStore"]
 
@@ -383,6 +389,9 @@ class Boolean(Parameter):
 
         self.value = self._validate(self._value)
 
+    def __nonzero__(self):
+        return self.value
+
     def __bool__(self):
         return self.value
 
@@ -437,8 +446,8 @@ class String(Parameter):
         if self.allow_any:
             return str(val)
 
-        if not isinstance(val, str):
-            raise ValueError("Parameter '%s' only takes string values" % (self.name))
+        if not isinstance(val, (str, unicode)):
+            raise ValueError("Parameter '{}' only takes string values not '{}'".format(self.name, type(val)))
 
         if self.regex is not None and re.match(self.regex, val) is None:
             raise ValueError("String '{}': '{}' does not match regex '{}'.".format(self.name, val, self.regex))
@@ -456,7 +465,7 @@ class Color(Parameter):
         self.value = self._validate(value)
 
     def _validate(self, val):
-        if not isinstance(val, str):
+        if not isinstance(val, (str, unicode)):
             raise ValueError("Color '%s' only takes a string value." % self.name)
         if not re.match("^#?(([0-9a-fA-F]{2}){3}|([0-9a-fA-F]){3})$", val):
             raise ValueError("Color '%s' only accepts valid RGB hex codes." % self.name)
@@ -472,9 +481,6 @@ class Option(Parameter):
     def __init__(self, value=None, kind="Option", **kws):
         super(Option, self).__init__(value=value, kind=kind, **kws)
         self._choices = kws.get("choices", [])
-
-    def __str__(self):
-        return "Choice(name={}, value='{}', choices={}, doc='{}')".format(self.name, self.value, self.choices, self.doc)
 
     def __contains__(self, other):
         return operator.contains(self.value, other)

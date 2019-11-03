@@ -1,6 +1,4 @@
 """General class for storing parameters"""
-from builtins import isinstance
-
 PROTECTED = ["_name"]
 N_PROTECTED = len(PROTECTED)
 
@@ -40,8 +38,8 @@ class ParameterStore(object):
     def __iter__(self):
         return iter(self.__dict__)
 
-    def export_as_json(self):
-        """Exports current instance as JSON dictionary"""
+    def export_as_dict(self):
+        """Exports current instance as dictionary"""
         _export = dict()
 
         for name, parameter in self.__dict__.items():
@@ -79,6 +77,8 @@ class ParameterStore(object):
                     _export[name].update(dict(allow_any=parameter.allow_any, regex=parameter.regex))
                 elif parameter.kind in ["Option", "Choice"]:
                     _export[name].update(dict(choices=parameter.choices))
+                elif parameter.kind in ["Color"]:
+                    _export[name].pop("allow_None")
 
         # return data
         return _export

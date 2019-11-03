@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2019 Lukasz Migas
 
-VERSION = "0.0.1"
+VERSION = "0.0.2"
 DESCRIPTION = "SimpleParam: simplified parameters with optional type and range checking"
 
 with open("README.md") as f:
@@ -23,6 +23,7 @@ PACKAGES = ["simpleparam"]
 
 CLASSIFIERS = [
     "Intended Audience :: Science/Research",
+    "Programming Language :: Python :: 2.7",
     "Programming Language :: Python :: 3.5",
     "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",

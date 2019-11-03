@@ -33,7 +33,7 @@ class TestChoiceSetup(object):
         choice = param.Choice(value=value, choices=choices)
         assert choice.value == value
         assert choice.choices == choices
-        assert str(choice) == "Choice(name=param, value='boo', choices=['boo', 'foo'], doc='')"
+        assert str(choice) == "boo"
 
     @staticmethod
     def test_change_choices():
