@@ -2,7 +2,7 @@
 #
 # Copyright (C) 2019 Lukasz Migas
 
-VERSION = "0.0.1"
+VERSION = "0.0.2"
 DESCRIPTION = "SimpleParam: simplified parameters with optional type and range checking"
 
 with open("README.md") as f:
