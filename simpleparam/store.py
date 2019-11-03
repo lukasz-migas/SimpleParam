@@ -1,5 +1,4 @@
 """General class for storing parameters"""
-from builtins import isinstance
 
 PROTECTED = ["_name"]
 N_PROTECTED = len(PROTECTED)
