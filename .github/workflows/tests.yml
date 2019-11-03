@@ -1,4 +1,4 @@
-name: SimpleParam: install and test
+name: SimpleParam - install and test
 
 on: [push]
 
