@@ -27,21 +27,21 @@ class TestParamStore(object):
     """Test Boolean class"""
 
     @staticmethod
-    def test_export_as_json():
+    def test_export_as_dict():
         """Test ParameterStore - correct initilization of constant"""
 
         config = Config()
-        export_dict = config.export_as_json()
+        export_dict = config.export_as_dict()
         assert len(export_dict) == 9
 
         fd, path = tempfile.mkstemp(suffix="json")
-        with open(fd, "w") as f_ptr:
+        with open(path, "w") as f_ptr:
             json.dump(export_dict, f_ptr)
 
     @staticmethod
-    def test_export_as_json_and_load():
+    def test_export_as_dict_and_load():
         config = Config()
-        export_dict = config.export_as_json()
+        export_dict = config.export_as_dict()
         assert len(export_dict) == 9
 
         fd, path = tempfile.mkstemp(suffix="json")
@@ -54,9 +54,9 @@ class TestParamStore(object):
         assert export_dict == import_dict
 
     @staticmethod
-    def test_export_as_json_and_load_and_set():
+    def test_export_as_dict_and_load_and_set():
         config = Config()
-        export_dict = config.export_as_json()
+        export_dict = config.export_as_dict()
         assert len(export_dict) == 9
 
         fd, path = tempfile.mkstemp(suffix="json")
@@ -80,9 +80,9 @@ class TestParamStore(object):
         assert config.param_str == "hello"
 
     @staticmethod
-    def test_export_as_json_and_load_and_set_ignored():
+    def test_export_as_dict_and_load_and_set_ignored():
         config = Config()
-        export_dict = config.export_as_json()
+        export_dict = config.export_as_dict()
         assert len(export_dict) == 9
 
         fd, path = tempfile.mkstemp(suffix="json")
@@ -106,9 +106,9 @@ class TestParamStore(object):
         assert config.param_str == "world"
 
     @staticmethod
-    def test_export_as_json_and_load_and_set_allowed():
+    def test_export_as_dict_and_load_and_set_allowed():
         config = Config()
-        export_dict = config.export_as_json()
+        export_dict = config.export_as_dict()
         assert len(export_dict) == 9
 
         fd, path = tempfile.mkstemp(suffix="json")
@@ -135,7 +135,7 @@ class TestParamStore(object):
         assert config.param_str.doc == "Old doc"
 
     @staticmethod
-    def test_export_as_json_and_load_and_set_allowed_and_ignored():
+    def test_export_as_dict_and_load_and_set_allowed_and_ignored():
         config = Config()
 
         with pytest.raises(ValueError) as __:

@@ -159,6 +159,7 @@ class TestBooleanOperations(object):
         bool_a = param.Boolean(value=value)
         assert bool_a.value == value
         assert bool(bool_a) == bool(value)
+
         value = False
         bool_a.value = value
         assert bool_a.value == value

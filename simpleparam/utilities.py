@@ -48,3 +48,29 @@ def get_occupied_slots(instance):
     value.)
     """
     return [slot for slot in get_all_slots(type(instance)) if hasattr(instance, slot)]
+
+
+# CLS_MATCH = {"Integer": Integer, "Number": Number, "String": String,
+#              "Choice": Choice, "Option": Option, "Boolean": Boolean, "Range": Range,
+#              "Color": Color}
+
+
+# def _validate_parameter(values):
+#     """Validate and create parameter
+
+#     Parameters
+#     ----------
+#     values : dict
+#         dictionary containing standard Parameter values
+
+#     Returns
+#     -------
+#     Parameter
+#         Parameter object based on values defined in the `values` object
+#     """
+
+#     obj_cls = values.get("kind", None)
+#     try:
+#         return cls_match.get(obj_cls, None)
+#     except ValueError:
+#         return None

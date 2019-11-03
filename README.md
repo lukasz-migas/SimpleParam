@@ -9,7 +9,7 @@
 
 ## About
 
-`SimpleParam` was inspired by the [param](https://param.pyviz.org/) library which offers lots of near features in a very
+`SimpleParam` was inspired by the [param](https://param.pyviz.org/) library which offers lots of neat features in a very
 small package, however, with somewhat tricky codebase. In `SimpleParam`, you can either create `Parameter` or
 `ParameterStore` using simple synthax.
 
@@ -28,14 +28,14 @@ number
 >>> Parameter(name=param, value=42, doc=')
 ```
 
-However, it is probably better to use parameters inside of a `ParameterStore`, where you can store multiple parameters together and take advantage of additional functionality (e.g. locking of parameters with `constant` or exporting parameters as JSON object using `export_as_json`):
+However, it is probably better to use parameters inside of a `ParameterStore`, where you can store multiple parameters together and take advantage of additional functionality (e.g. locking of parameters with `constant` or exporting parameters as JSON object using `export_as_dict`):
 
 ```python
 import simpleparam as param
 
 class Config(param.ParameterStore):
     def __init__(self):
-        sp.ParameterStore.__init__(self)
+        param.ParameterStore.__init__(self)
 
         # # you can add parameter docstrings by setting `doc`
         self.integer = param.Integer(42,
@@ -57,67 +57,25 @@ class Config(param.ParameterStore):
         self.color = param.Color("#FFFFFF",
                                  constant=True)
         self.bool = param.Boolean(True)
+        self.range = param.Range(value=[0, 100], hardbounds=[0, 100])
 
 config = Config()
 config
 
->>> ParameterStore(count=6)
+>>> ParameterStore(count=7)
 ```
 
-`ParameterStore` can be exported as JSON dictionary by simply calling `config.export_as_json()` to give:
-
-```python
->>> {
-'integer': {'name': 'param',
-  'value': 42,
-  'doc': 'A not very important value',
-  'softbounds': None,
-  'hardbounds': None,
-  'kind': 'Integer'},
- 'number': {'name': 'param',
-  'value': 42.0,
-  'doc': '',
-  'softbounds': [0, 100],
-  'hardbounds': [1, 100],
-  'kind': 'Number'},
- 'string': {'name': 'param', 'value': 'string', 'doc': '', 'kind': 'String'},
- 'choice': {'name': 'foo_bar_choice',
-  'value': 'foo',
-  'doc': '',
-  'choices': ['foo', 'bar'],
-  'kind': 'Choice'},
- 'color': {'name': 'param', 'value': '#FFFFFF', 'doc': '', 'kind': 'Color'},
- 'bool': {'name': 'param', 'value': True, 'doc': '', 'kind': 'Boolean'}
- }
-```
-
-Built-in type-checking
-
-```python
-number = param.Number("42")
-[ ... ]
->>> ValueError: Parameter 'param' only takes numeric values
-```
-
-Built-in range-checking
-
-```python
-number = param.Number(42, hardbounds=[0, 41])
-[ ... ]
->>> ValueError: Parameter 'param' must be at most 41
-```
-
-Which can be relaxed to allow value correction if its set outside of the hard boundary
-
-```python
-number = param.Number(42, hardbounds=[0, 41], auto_bound=True)
-[ ... ]
->>> Parameter(name='param', value=41, doc='')
-```
+For complete documentation, please visit the [docs](https://www.simpleparam.lukasz-migas.com/) website.
 
 ## Instalation
 
-Directly from GitHub
+Install from PyPI
+
+```python
+pip install simpleparam
+```
+
+or directly from GitHub
 
 ```python
 pip install git+https://github.com/lukasz-migas/SimpleParam.git
@@ -137,9 +95,8 @@ python setup.py develop
 
 SimpleParam has no external requirements and works in py2 and py3.
 
-
 ## Planned features
 
-- add 'List', 'Dict' classes
-- rename 'Color' to 'ColorHEX' or add 'modes': RGB or HEX
-- add Array class
+-   add 'List', 'Dict' classes
+-   rename 'Color' to 'ColorHEX' or add 'modes': RGB or HEX
+-   add Array class

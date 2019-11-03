@@ -75,7 +75,7 @@ class TestParamStore(object):
                 self.value = 123
 
         config = Config()
-        export_dict = config.export_as_json()
+        export_dict = config.export_as_dict()
         assert len(export_dict) == 9
 
     @staticmethod
@@ -88,7 +88,7 @@ class TestParamStore(object):
                 self.param_int = param.Integer(value=666, saveable=False)
 
         config = Config()
-        export_dict = config.export_as_json()
+        export_dict = config.export_as_dict()
         assert not export_dict
 
     @staticmethod
