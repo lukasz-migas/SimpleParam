@@ -413,9 +413,6 @@ class Boolean(Parameter):
                     val = bool(val)
                 else:
                     raise ValueError("Boolean '%s' only takes a Boolean value." % self.name)
-
-            if val is not True and val is not False:
-                raise ValueError("Boolean '%s' must be True or False." % self.name)
         return val
 
 

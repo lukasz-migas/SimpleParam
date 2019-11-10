@@ -95,11 +95,25 @@ class TestListSetup(object):
             __ = param.List(value=value, hardbounds=[2, 3])
 
     @staticmethod
+    def test_creation_outside_bounds_lower_one_set():
+        """Test List - throw error due to incorrect initilization"""
+        with pytest.raises(ValueError) as __:
+            value = [1]
+            __ = param.List(value=value, hardbounds=[2, None])
+
+    @staticmethod
     def test_creation_outside_bounds_upper():
         """Test List - throw error due to incorrect initilization"""
         with pytest.raises(ValueError) as __:
             value = [1, 3, 4, 5]
             __ = param.List(value=value, hardbounds=[0, 3])
+
+    @staticmethod
+    def test_creation_outside_bounds_upper_one_set():
+        """Test List - throw error due to incorrect initilization"""
+        with pytest.raises(ValueError) as __:
+            value = [1, 3, 4, 5]
+            __ = param.List(value=value, hardbounds=[None, 3])
 
     @staticmethod
     def test_creation_dict():
