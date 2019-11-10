@@ -41,6 +41,11 @@ color = param.Color("#FFFF")
 value = param.Boolean(2)
 [ ... ]
 ValueError: Boolean 'param' only takes a Boolean value or None.
+
+
+value = param.List(1)
+[ ... ]
+ValueError: List 'param' must be a list.
 ```
 
 Built-in range-checking
@@ -51,7 +56,7 @@ number = param.Number(42, hardbounds=[0, 41])
 >>> ValueError: Parameter 'param' must be at most 41
 ```
 
-Which can be relaxed to allow value correction if its set outside of the hard boundary
+Which can be relaxed to allow value correction if its set outside of the hard boundary (in the case of `Integer` or `Number`)
 
 ```python
 number = param.Number(42, hardbounds=[0, 41], auto_bound=True)
@@ -62,13 +67,17 @@ number
 >>> 42
 ```
 
-Range checking is also performed in the `Range` parameter where each value is checked against the `hardbounds`
+Range checking is also performed in the `Range` and `List` parametesr where each value is checked against the `hardbounds`
 
 ```python
 number = param.Range([0, 100], hardbounds=[0, 100])
 number.value = [-1, 100]
 [ ... ]
 >>> ValueError: Parameter 'param' must be at least 0
+
+value = param.List(["Hello", "World"], hardbounds=[None, 1])
+[ ... ]
+>>> ValueError: Parameter 'param' list length must be at most 1.
 ```
 
 When creating `Choice`, any value to be set after it has been initilized will be checked against set choices
@@ -116,7 +125,7 @@ print(type(number))
 >>> <class 'simpleparam.Number'>
 ```
 
-and not
+  and not
 
 ```python
 number = param.Number(42, doc="I am the answer")
@@ -125,6 +134,21 @@ number += 1
 print(type(number))
 >>> <class 'simpleparam.Number'>
 >>> <class 'int'>
+```
+
+This is not necessarily the case for all parameters:
+
+```python
+item = param.List(["Hello", "World"])
+item[0] = "Goodbye"
+item
+>>> ['Goodbye', 'World']
+
+item = param.List(["Hello", "World"])
+del item[0]
+item
+>>>
+['World']
 ```
 
 ## ParameterStore
@@ -161,6 +185,7 @@ class Config(param.ParameterStore):
                                  constant=True)
         self.bool = param.Boolean(True)
         self.range = param.Range(value=[0, 100], hardbounds=[0, 100])
+        self.list = param.List([0, 1])
 
 config = Config()
 config
@@ -227,7 +252,13 @@ export_dict
   'softbounds': None,
   'hardbounds': [0, 100],
   'inclusive_bounds': [True, True],
-  'step': None}}
+  'step': None}
+  'list': {'name': 'param',
+  'value': [0, 1],
+  'doc': '',
+  'kind': 'List',
+  'allow_None': True,
+  'hardbounds': None}}
 ```
 
 ### Importing from dictionary
@@ -286,3 +317,7 @@ print(config.integer, config.integer.doc)
 
 !!! Important
     You cannot specify both `allowed_attributes` and `ignored_attributes`. This will result in an error.
+
+### Pickling
+
+You can pickle the `ParameterStore` object as you would do any other configuration object. When unpickling, values will be restored to their original state.

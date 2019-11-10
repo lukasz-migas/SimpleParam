@@ -17,7 +17,7 @@ class TestChoiceSetup(object):
         assert choice.choices == choices
 
     @staticmethod
-    def test_kind():
+    def test_doc():
         """Test Choice - correct initilization"""
         value = "boo"
         choices = ["boo", "foo"]
@@ -72,7 +72,7 @@ class TestChoiceSetup(object):
         with pytest.raises(ValueError) as __:
             value = "true"
             choices = [True, False]
-            choice = param.Choice(value=value, choices=choices)
+            __ = param.Choice(value=value, choices=choices)
 
     @staticmethod
     def test_missing_choice_not_list():
@@ -80,7 +80,7 @@ class TestChoiceSetup(object):
         with pytest.raises(ValueError) as __:
             value = "true"
             choices = "true"
-            choice = param.Choice(value=value, choices=choices)
+            __ = param.Choice(value=value, choices=choices)
 
     @staticmethod
     def test_notallow_none():
@@ -88,18 +88,29 @@ class TestChoiceSetup(object):
         with pytest.raises(ValueError) as __:
             value = None
             choices = [True, False]
-            choice = param.Choice(value=value, choices=choices, allow_None=False)
+            __ = param.Choice(value=value, choices=choices, allow_None=False)
 
 
 class TestChoiceOperations(object):
-    """Test Boolean class operations"""
+    """Test Choice class operations"""
 
     @staticmethod
-    def test_add():
-        """Test Boolean - correct initilization"""
+    def test_contains_bool():
+        """Test Choice - correct initilization"""
         value = False
         choices = [True, False]
         choice = param.Choice(value=value, choices=choices)
         assert choice.value == value
         assert choice.choices == choices
-        assert False in choices
+        assert value in choice.choices
+        assert value in choices
+
+    @staticmethod
+    def test_contains_str():
+        """Test Choice - correct initilization"""
+        value = "abc"
+        choices = ["abc", "cde"]
+        choice = param.Choice(value=value, choices=choices)
+        assert choice.value == value
+        assert choice.choices == choices
+        assert "a" in choice

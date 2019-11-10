@@ -21,6 +21,7 @@ class Config(param.ParameterStore):
         self.param_bool = param.Boolean(False)
         self.param_option = param.Option(value=None, choices=[True, False])
         self.param_range = param.Range(value=[-100, 100], hardbounds=[-200, None])
+        self.param_list = param.List(value=[1, 2, 3], hardbounds=[0, 10])
 
 
 class TestParamStore(object):
@@ -32,7 +33,7 @@ class TestParamStore(object):
 
         config = Config()
         export_dict = config.export_as_dict()
-        assert len(export_dict) == 9
+        assert len(export_dict) == 10
 
         fd, path = tempfile.mkstemp(suffix="json")
         with open(path, "w") as f_ptr:
@@ -42,7 +43,7 @@ class TestParamStore(object):
     def test_export_as_dict_and_load():
         config = Config()
         export_dict = config.export_as_dict()
-        assert len(export_dict) == 9
+        assert len(export_dict) == 10
 
         fd, path = tempfile.mkstemp(suffix="json")
         with open(path, "w") as f_ptr:
@@ -57,7 +58,7 @@ class TestParamStore(object):
     def test_export_as_dict_and_load_and_set():
         config = Config()
         export_dict = config.export_as_dict()
-        assert len(export_dict) == 9
+        assert len(export_dict) == 10
 
         fd, path = tempfile.mkstemp(suffix="json")
         with open(path, "w") as f_ptr:
@@ -83,7 +84,7 @@ class TestParamStore(object):
     def test_export_as_dict_and_load_and_set_ignored():
         config = Config()
         export_dict = config.export_as_dict()
-        assert len(export_dict) == 9
+        assert len(export_dict) == 10
 
         fd, path = tempfile.mkstemp(suffix="json")
         with open(path, "w") as f_ptr:
@@ -109,7 +110,7 @@ class TestParamStore(object):
     def test_export_as_dict_and_load_and_set_allowed():
         config = Config()
         export_dict = config.export_as_dict()
-        assert len(export_dict) == 9
+        assert len(export_dict) == 10
 
         fd, path = tempfile.mkstemp(suffix="json")
         with open(path, "w") as f_ptr:

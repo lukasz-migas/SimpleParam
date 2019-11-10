@@ -79,6 +79,8 @@ class ParameterStore(object):
                     _export[name].update(dict(choices=parameter.choices))
                 elif parameter.kind in ["Color"]:
                     _export[name].pop("allow_None")
+                elif parameter.kind in ["List"]:
+                    _export[name].update(dict(hardbounds=parameter.hardbounds))
 
         # return data
         return _export

@@ -20,6 +20,7 @@ class Config(param.ParameterStore):
         self.param_bool = param.Boolean(False)
         self.param_option = param.Option(value=None, choices=[True, False])
         self.param_range = param.Range(value=[-100, 100], hardbounds=[-200, None])
+        self.param_list = param.List(value=[1, 2, 3], hardbounds=[0, 10])
 
 
 class TestParamStorePickle(object):
