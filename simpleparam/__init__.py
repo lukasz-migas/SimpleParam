@@ -11,7 +11,6 @@ import operator
 import re
 import sys
 
-from ._version import get_versions
 from .store import ParameterStore  # noqa
 from .utilities import get_occupied_slots
 from .utilities import is_number
