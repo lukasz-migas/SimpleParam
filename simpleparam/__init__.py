@@ -11,6 +11,7 @@ import operator
 import re
 import sys
 
+from ._version import get_versions
 from .store import ParameterStore  # noqa
 from .utilities import get_occupied_slots
 from .utilities import is_number
@@ -610,3 +611,7 @@ class List(Parameter):
             elif max_length is not None:
                 if not n_items <= max_length:
                     raise ValueError("Parameter '{}' list length must be at most {}.".format(self.name, max_length))
+
+
+__version__ = get_versions()["version"]
+del get_versions
