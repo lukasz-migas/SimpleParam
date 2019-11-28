@@ -39,6 +39,7 @@ try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
+import versioneer
 
 if __name__ == "__main__":
 
@@ -53,7 +54,8 @@ if __name__ == "__main__":
         long_description_content_type="text/markdown",
         license=LICENSE,
         url=URL,
-        version=VERSION,
+        version=versioneer.get_version(),
+        cmdclass=versioneer.get_cmdclass(),
         download_url=DOWNLOAD_URL,
         install_requires=INSTALL_REQUIRES,
         packages=PACKAGES,
