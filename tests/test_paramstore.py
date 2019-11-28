@@ -70,13 +70,14 @@ class TestParamStore(object):
                 self.param_bool = param.Boolean(False)
                 self.param_option = param.Option(value=None, choices=[True, False])
                 self.param_range = param.Range(value=[-100, 100], hardbounds=[-200, None])
+                self.param_list = param.List(value=[1, 2, 3], hardbounds=[0, 10])
 
                 # non-param value which will not be taken into account during the count
                 self.value = 123
 
         config = Config()
         export_dict = config.export_as_dict()
-        assert len(export_dict) == 9
+        assert len(export_dict) == 10
 
     @staticmethod
     def test_variables_not_exportable():

@@ -6,6 +6,7 @@ making it slightly easier to use while also allowing easy expansion
 """
 from __future__ import division
 
+import copy
 import operator
 import re
 import sys
@@ -25,14 +26,14 @@ class Parameter(object):
 
     __slots__ = ["_value", "_kind", "name", "doc", "saveable", "allow_None", "constant"]
 
-    def __init__(self, **kws):
-        self.name = kws.get("name", "param")
-        self.doc = kws.get("doc", "")
-        self._value = kws.get("value", None)
-        self._kind = kws.get("kind", "Parameter")
-        self.saveable = self._validate_bool(kws.get("saveable", True))
-        self.constant = self._validate_bool(kws.get("constant", False))
-        self.allow_None = self._validate_bool(kws.get("allow_None", True))
+    def __init__(self, **kwargs):
+        self.name = kwargs.get("name", "param")
+        self.doc = kwargs.get("doc", "")
+        self._value = kwargs.get("value", None)
+        self._kind = kwargs.get("kind", "Parameter")
+        self.saveable = self._validate_bool(kwargs.get("saveable", True))
+        self.constant = self._validate_bool(kwargs.get("constant", False))
+        self.allow_None = self._validate_bool(kwargs.get("allow_None", True))
 
     def __str__(self):
         return str(self.value)
@@ -169,14 +170,14 @@ class Number(Parameter):
 
     __slots__ = ["_softbounds", "_hardbounds", "inclusive_bounds", "auto_bound", "step"]
 
-    def __init__(self, value, kind="Number", **kws):
-        super(Number, self).__init__(value=value, kind=kind, **kws)
+    def __init__(self, value, kind="Number", **kwargs):
+        super(Number, self).__init__(value=value, kind=kind, **kwargs)
 
-        self._softbounds = self._validate_bounds(kws.get("softbounds", None))
-        self._hardbounds = self._validate_bounds(kws.get("hardbounds", None))
-        self.auto_bound = self._validate_bool(kws.get("auto_bound", False))
-        self.inclusive_bounds = kws.get("inclusive_bounds", [True, True])
-        self.step = kws.get("step", None)
+        self._softbounds = self._validate_bounds(kwargs.get("softbounds", None))
+        self._hardbounds = self._validate_bounds(kwargs.get("hardbounds", None))
+        self.auto_bound = self._validate_bool(kwargs.get("auto_bound", False))
+        self.inclusive_bounds = kwargs.get("inclusive_bounds", [True, True])
+        self.step = kwargs.get("step", None)
 
         self.value = self._validate(self._value)
 
@@ -323,8 +324,8 @@ class Integer(Number):
 
     __slots__ = []
 
-    def __init__(self, value, kind="Integer", **kws):
-        super(Integer, self).__init__(value=value, kind=kind, **kws)
+    def __init__(self, value, kind="Integer", **kwargs):
+        super(Integer, self).__init__(value=value, kind=kind, **kwargs)
 
         self.value = self._validate(self._value)
 
@@ -348,8 +349,8 @@ class Range(Number):
 
     __slots__ = []
 
-    def __init__(self, value, kind="Range", **kws):
-        super(Range, self).__init__(value=value, kind=kind, **kws)
+    def __init__(self, value, kind="Range", **kwargs):
+        super(Range, self).__init__(value=value, kind=kind, **kwargs)
 
         self.value = self._validate(self._value)
 
@@ -384,8 +385,8 @@ class Boolean(Parameter):
 
     __slots__ = []
 
-    def __init__(self, value, kind="Boolean", **kws):
-        super(Boolean, self).__init__(value=value, kind=kind, **kws)
+    def __init__(self, value, kind="Boolean", **kwargs):
+        super(Boolean, self).__init__(value=value, kind=kind, **kwargs)
 
         self.value = self._validate(self._value)
 
@@ -412,21 +413,18 @@ class Boolean(Parameter):
                     val = bool(val)
                 else:
                     raise ValueError("Boolean '%s' only takes a Boolean value." % self.name)
-
-            if val is not True and val is not False:
-                raise ValueError("Boolean '%s' must be True or False." % self.name)
         return val
 
 
 class String(Parameter):
     """String Parameter"""
 
-    __slots__ = ["name", "doc", "_value", "allow_None", "allow_any", "saveable", "constant", "regex"]
+    __slots__ = ["allow_any", "regex"]
 
-    def __init__(self, value, regex=None, kind="String", **kws):
-        super(String, self).__init__(value=value, kind=kind, **kws)
+    def __init__(self, value, regex=None, kind="String", **kwargs):
+        super(String, self).__init__(value=value, kind=kind, **kwargs)
 
-        self.allow_any = kws.get("allow_any", False)
+        self.allow_any = kwargs.get("allow_any", False)
         self.regex = regex
         self.value = self._validate(self._value)
 
@@ -478,9 +476,9 @@ class Option(Parameter):
 
     __slots__ = ["_choices"]
 
-    def __init__(self, value=None, kind="Option", **kws):
-        super(Option, self).__init__(value=value, kind=kind, **kws)
-        self._choices = kws.get("choices", [])
+    def __init__(self, value=None, kind="Option", **kwargs):
+        super(Option, self).__init__(value=value, kind=kind, **kwargs)
+        self._choices = kwargs.get("choices", [])
 
     def __contains__(self, other):
         return operator.contains(self.value, other)
@@ -523,8 +521,92 @@ class Choice(Option):
 
     __slots__ = []
 
-    def __init__(self, value, choices, kind="Choice", **kws):
-        super(Choice, self).__init__(value=value, choices=choices, kind=kind, **kws)
+    def __init__(self, value, choices, kind="Choice", **kwargs):
+        super(Choice, self).__init__(value=value, choices=choices, kind=kind, **kwargs)
 
         self._validate_choices(choices)
         self.value = self._validate(self._value)
+
+
+class List(Parameter):
+
+    __slots__ = ["_hardbounds"]
+
+    def __init__(self, value=None, kind="List", **kwargs):
+        super(List, self).__init__(value=value, kind=kind, **kwargs)
+        self._hardbounds = self._validate_bounds(kwargs.get("hardbounds", None))
+        self.value = self._validate(value)
+
+    def __contains__(self, other):
+        return operator.contains(self.value, other)
+
+    def __getitem__(self, k):
+        return operator.getitem(self.value, k)
+
+    def __delitem__(self, k):
+        _value = copy.deepcopy(self.value)
+        operator.delitem(_value, k)
+        self.value = self._validate(_value)
+
+    def __setitem__(self, k, value):
+        _value = copy.deepcopy(self.value)
+        operator.setitem(_value, k, value)
+        self.value = self._validate(_value)
+
+    @property
+    def hardbounds(self):
+        """Get `hardbounds`"""
+        return self._hardbounds
+
+    @hardbounds.setter
+    def hardbounds(self, value):
+        """Set `hardbounds`"""
+        self._hardbounds = self._validate_bounds(value)
+
+    def _validate(self, val):
+        """
+        Checks that the list is of the right length and has the right contents.
+        Otherwise, an exception is raised.
+        """
+        if self.allow_None and val is None:
+            return
+
+        if not isinstance(val, list):
+            raise ValueError("List '%s' must be a list." % (self.name))
+
+        self._check_bounds(val)
+        return val
+
+    def _validate_bounds(self, val):
+        """Ensure bounds are correctly setup"""
+        if val is None:
+            return val
+
+        if isinstance(val, tuple):
+            val = list(val)
+
+        if isinstance(val, list):
+            if len(val) != 2:
+                raise ValueError("Bounds must be either set to 'None' or contain 2 values")
+
+        return val
+
+    def _check_bounds(self, val):
+        """Check bounds and if outside, thrown an exception"""
+
+        if self.hardbounds is not None:
+            min_length, max_length = self.hardbounds
+            n_items = len(val)
+            if min_length is not None and max_length is not None:
+                if not (min_length <= n_items <= max_length):
+                    raise ValueError(
+                        "{}: list length must be between {} and {} (inclusive)".format(
+                            self.name, min_length, max_length
+                        )
+                    )
+            elif min_length is not None:
+                if not min_length <= n_items:
+                    raise ValueError("Parameter '{}' list length must be at least {}.".format(self.name, min_length))
+            elif max_length is not None:
+                if not n_items <= max_length:
+                    raise ValueError("Parameter '{}' list length must be at most {}.".format(self.name, max_length))

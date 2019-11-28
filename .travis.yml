@@ -50,6 +50,7 @@ after_success:
     fi
 
 deploy:
+  branch: master
   provider: pypi
   user: "__token__"
   password:
