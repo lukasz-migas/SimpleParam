@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 #
 # Copyright (C) 2019 Lukasz Migas
-
-import versioneer
 VERSION = "0.0.4"
 DESCRIPTION = "SimpleParam: simplified parameters with optional type and range checking"
 
@@ -54,8 +52,7 @@ if __name__ == "__main__":
         long_description_content_type="text/markdown",
         license=LICENSE,
         url=URL,
-        version=VERSION,  # versioneer.get_version(),
-        cmdclass=versioneer.get_cmdclass(),
+        version=VERSION,
         download_url=DOWNLOAD_URL,
         install_requires=INSTALL_REQUIRES,
         packages=PACKAGES,
