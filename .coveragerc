@@ -2,7 +2,6 @@
 omit =
     # Omit tests
     tests/*
-    */_version.py
 
 [report]
 # Regexes for lines to exclude from consideration
