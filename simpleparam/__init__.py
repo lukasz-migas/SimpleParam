@@ -610,7 +610,3 @@ class List(Parameter):
             elif max_length is not None:
                 if not n_items <= max_length:
                     raise ValueError("Parameter '{}' list length must be at most {}.".format(self.name, max_length))
-
-
-__version__ = get_versions()["version"]
-del get_versions
