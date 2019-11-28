@@ -2,7 +2,8 @@
 #
 # Copyright (C) 2019 Lukasz Migas
 
-VERSION = "0.0.3"
+import versioneer
+VERSION = "0.0.4"
 DESCRIPTION = "SimpleParam: simplified parameters with optional type and range checking"
 
 with open("README.md") as f:
@@ -39,7 +40,6 @@ try:
     from setuptools import setup
 except ImportError:
     from distutils.core import setup
-import versioneer
 
 if __name__ == "__main__":
 
@@ -54,7 +54,7 @@ if __name__ == "__main__":
         long_description_content_type="text/markdown",
         license=LICENSE,
         url=URL,
-        version=versioneer.get_version(),
+        version=VERSION,  # versioneer.get_version(),
         cmdclass=versioneer.get_cmdclass(),
         download_url=DOWNLOAD_URL,
         install_requires=INSTALL_REQUIRES,
